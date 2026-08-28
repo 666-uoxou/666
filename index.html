@@ -402,6 +402,45 @@ body.modal-open{ overflow: hidden; }
   .character-grid,
   .gallery-grid{ grid-template-columns: 1fr 1fr; }
 }
+
+   /* --- 3Dカードホバー演出の追加 --- */
+.character-grid {
+  perspective: 1000px; /* 3Dの奥行き感 */
+}
+
+.character-card {
+  position: relative;
+  overflow: hidden; /* ツヤがはみ出ないように */
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out, border-color 0.25s ease, box-shadow 0.25s ease;
+  will-change: transform;
+}
+
+/* ホバー時の影と枠線の発光 */
+.character-card:hover {
+  border-color: var(--accent-blood);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.6), 0 0 12px rgba(140,28,43,0.3);
+}
+
+/* カード表面の光沢（ツヤ）レイヤー */
+.character-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+}
+
+.character-card:hover::after {
+  opacity: 1; /* カーソルが乗った時だけ光沢を表示 */
+}
 </style>
 </head>
 <body class="modal-open">
@@ -909,6 +948,54 @@ document.addEventListener('DOMContentLoaded', function(){
     closeWelcomeModal();
   });
   document.getElementById('welcomeBtnOff').addEventListener('click', closeWelcomeModal);
+});
+
+// --- キャラクターカードの3Dホバー ＆ CHAPTER IIIジャンプ処理 ---
+var charCards = Array.prototype.slice.call(document.querySelectorAll('.character-card'));
+
+charCards.forEach(function(card, index){
+  card.style.cursor = 'pointer';
+
+  // ① マウス移動に合わせてカードを傾け、光沢を動かす
+  card.addEventListener('mousemove', function(e){
+    var rect = card.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+    
+    var centerX = rect.width / 2;
+    var centerY = rect.height / 2;
+    
+    // 傾き角度（最大12度）
+    var rotateX = ((y - centerY) / centerY) * -12;
+    var rotateY = ((x - centerX) / centerX) * 12;
+    
+    // 光沢の位置（%換算）
+    var percentX = (x / rect.width) * 100;
+    var percentY = (y / rect.height) * 100;
+    
+    card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateZ(10px)';
+    card.style.setProperty('--mouse-x', percentX + '%');
+    card.style.setProperty('--mouse-y', percentY + '%');
+  });
+
+  // ② マウスが外れたら角度と位置をリセット
+  card.addEventListener('mouseleave', function(){
+    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+  });
+
+  // ③ クリックでCHAPTER IIIの該当タブへジャンプ
+  card.addEventListener('click', function(){
+    var targetPanelId = 'char-panel-' + (index + 1);
+    var targetTabId = 'char-tab-' + (index + 1);
+    
+    var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.char-tab-btn'));
+    var panels = Array.prototype.slice.call(document.querySelectorAll('.char-detail-panel'));
+    
+    tabButtons.forEach(function(b){ b.classList.toggle('is-active', b.id === targetTabId); });
+    panels.forEach(function(p){ p.classList.toggle('is-active', p.id === targetPanelId); });
+    
+    location.hash = '#setting';
+  });
 });
 </script>
 <script src="https://www.youtube.com/iframe_api"></script>
