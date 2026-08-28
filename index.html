@@ -631,7 +631,7 @@ body.modal-open{ overflow: hidden; }
     </div>
     <div class="mp-volume">
       <span class="mp-volume-icon">♪</span>
-      <input type="range" id="mpVolume" min="0" max="100" value="20">
+      <input type="range" id="mpVolume" min="0" max="100" value="40">
     </div>
   </div>
   <div id="ytPlayerContainer" class="mp-yt-hidden"></div>
@@ -695,7 +695,7 @@ window.onYouTubeIframeAPIReady = function(){
     events: {
       onReady: function(e){
         isPlayerReady = true;
-        e.target.setVolume(20);
+        e.target.setVolume(40);
         if(pendingAutoplay){ pendingAutoplay = false; e.target.playVideo(); }
       },
       onStateChange: function(e){
