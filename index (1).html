@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOCTURNE.666 — 個人ホームページ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   デザイン・トークン
+   ============================================================ */
+:root{
+  --bg-void:      #0a0809;   /* 最背面（闇） */
+  --bg-panel:     #131013;   /* カード/パネル地 */
+  --bg-panel-alt: #1a1518;   /* 枠内要素 */
+  --border-blood: #3d1119;   /* 深紅の罫線 */
+  --border-faint: #241b1e;   /* 控えめな罫線 */
+  --accent-blood: #8c1c2b;   /* アクセントカラー */
+  --accent-bright:#c9293f;   /* 光るアクセント */
+  --text-main:    #e8e1de;   /* 本文 */
+  --text-muted:   #9c9092;   /* 補足 */
+  --text-faint:   #635a5c;   /* 薄いテキスト */
+
+  --font-display: 'Cinzel', 'Shippori Mincho', serif;
+  --font-heading: 'Shippori Mincho', serif;
+  --font-body:    'Noto Sans JP', sans-serif;
+
+  --sidebar-w: 250px;
+  --content-max: 780px;
+}
+
+/* ============================================================
+   基本設定
+   ============================================================ */
+*{ box-sizing: border-box; margin: 0; padding: 0; }
+html{ scroll-behavior: smooth; }
+body{
+  background: linear-gradient(to top, #3d1119 0%, #1a080c 40%, #0a0809 100%);
+  background-attachment: fixed; /* スクロールしてもグラデーションの位置を固定する設定 */
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.9;
+  min-height: 100vh;
+}
+a{ color: inherit; text-decoration: none; }
+img{ max-width: 100%; display: block; }
+ul{ list-style: none; }
+h1, h2, h3{ font-family: var(--font-heading); font-weight: 700; letter-spacing: 0.04em; }
+
+a:focus-visible, button:focus-visible{
+  outline: 1px solid var(--accent-bright);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   サイドバー
+   ============================================================ */
+.sidebar{
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border-blood);
+  padding: 44px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  z-index: 10;
+}
+
+.site-mark{ display: flex; flex-direction: column; gap: 6px; }
+.site-mark .ornament{ color: var(--accent-blood); font-size: 15px; letter-spacing: 0.3em; }
+.site-mark .title-en{ font-family: var(--font-display); font-size: 26px; letter-spacing: 0.12em; color: var(--text-main); }
+.site-mark .title-sub{ font-size: 11px; letter-spacing: 0.2em; color: var(--text-faint); margin-top: 2px; }
+
+.chapter-nav{ display: flex; flex-direction: column; gap: 4px; }
+.chapter-nav a{
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 12px 4px; border-bottom: 1px solid transparent;
+  color: var(--text-muted); font-size: 14px; letter-spacing: 0.06em;
+  transition: color 0.25s ease, border-color 0.25s ease, padding-left 0.25s ease;
+}
+.chapter-nav a:hover, .chapter-nav a.is-current{
+  color: var(--text-main); border-bottom-color: var(--accent-blood); padding-left: 10px;
+}
+.chapter-nav a.is-current .roman{ color: var(--accent-bright); }
+.chapter-nav .roman{ font-family: var(--font-display); font-size: 13px; color: var(--accent-blood); min-width: 22px; }
+
+.nav-divider{ height: 1px; background: var(--border-faint); margin: 4px 4px 8px; }
+.nav-secondary a{
+  display: flex; align-items: baseline; gap: 10px; padding: 6px 4px;
+  color: var(--text-faint); font-size: 12px; letter-spacing: 0.1em; transition: color 0.25s ease;
+}
+.nav-secondary a:hover, .nav-secondary a.is-current{ color: var(--text-muted); }
+.nav-secondary a::before{ content: "◆"; font-size: 7px; color: var(--border-blood); }
+.nav-secondary a.is-current::before{ color: var(--accent-bright); }
+
+.sidebar-foot{ margin-top: auto; font-size: 11px; color: var(--text-faint); letter-spacing: 0.08em; line-height: 1.8; }
+
+/* ============================================================
+   メインコンテンツ
+   ============================================================ */
+.main{
+  margin-left: var(--sidebar-w);
+  padding: 90px 60px 140px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.page{ width: 100%; max-width: var(--content-max); display: none; }
+.page.is-active{ display: block; animation: page-in 0.5s ease; }
+
+@keyframes page-in{
+  from{ opacity: 0; transform: translateY(10px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+.section-head{ margin-bottom: 48px; }
+.eyebrow{
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--font-display); font-size: 12px; letter-spacing: 0.35em;
+  color: var(--accent-blood); margin-bottom: 14px;
+}
+.eyebrow::before{ content: ""; width: 26px; height: 1px; background: var(--accent-blood); }
+.section-head h2{ font-size: 30px; color: var(--text-main); }
+.section-lead{ margin-top: 12px; color: var(--text-muted); font-size: 14px; max-width: 46em; }
+
+.page-nav{
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;
+  margin-top: 70px; padding-top: 26px; border-top: 1px solid var(--border-faint);
+}
+.page-nav a{
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 0.12em;
+  color: var(--text-muted); transition: color 0.25s ease;
+}
+.page-nav a:hover{ color: var(--accent-bright); }
+.page-nav .next{ margin-left: auto; text-align: right; }
+.page-nav a .label{ display: block; font-family: var(--font-body); font-size: 12px; color: var(--text-faint); margin-top: 5px; }
+
+/* PROFILE */
+.author-note{
+  display: flex; align-items: flex-start; gap: 20px;
+  padding: 26px 28px; background: var(--bg-panel); border: 1px solid var(--border-faint);
+}
+.author-avatar{
+  width: 56px; height: 56px; flex-shrink: 0; border-radius: 50%;
+  background: var(--bg-panel-alt); border: 1px solid var(--border-blood);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.author-avatar img{ width: 100%; height: 100%; object-fit: cover; }
+.author-avatar .placeholder-text{ font-family: var(--font-display); font-size: 9px; color: var(--text-faint); }
+.author-name-en{ font-family: var(--font-display); font-size: 11px; letter-spacing: 0.2em; color: var(--accent-blood); }
+.author-name{ font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.author-catch{ color: var(--text-muted); font-size: 13px; margin-bottom: 8px; }
+.author-info{ display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 11px; color: var(--text-faint); }
+.author-info span b{ color: var(--text-muted); font-weight: 400; }
+
+/* CHARACTERS */
+.character-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px 24px; }
+.character-item-wrap { display: flex; flex-direction: column; gap: 10px; }
+.character-card{ background: var(--bg-panel); border: 1px solid var(--border-faint); transition: border-color 0.25s ease; }
+.character-card:hover{ border-color: var(--border-blood); }
+.character-card .img-frame, .gallery-item .img-frame{
+  aspect-ratio: 4 / 5; background: var(--bg-panel-alt); display: flex; align-items: center;
+  justify-content: center; border-bottom: 1px solid var(--border-blood); overflow: hidden;
+}
+.character-card .img-frame img, .gallery-item .img-frame img{ width: 100%; height: 100%; object-fit: cover; }
+.placeholder-text{ font-family: var(--font-display); font-size: 10px; letter-spacing: 0.15em; color: var(--text-faint); }
+.character-card .card-body{ padding: 20px; }
+.character-card .name-en{ font-family: var(--font-display); font-size: 11px; letter-spacing: 0.2em; color: var(--accent-blood); }
+.character-card .name{ font-size: 19px; margin: 4px 0 10px; }
+.tag-row{ display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.tag{ font-size: 10px; color: var(--text-muted); border: 1px solid var(--border-blood); padding: 3px 9px; }
+.character-card .desc{ font-size: 13px; color: var(--text-muted); line-height: 1.8; }
+
+/* カード外下部の LEARN MORE ボタン */
+.card-action{
+  display: flex;
+  justify-content: center;
+}
+.learn-more-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-blood);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+.learn-more-btn:hover{
+  background: var(--accent-blood);
+  border-color: var(--accent-bright);
+  color: var(--text-main);
+  box-shadow: 0 0 12px rgba(201, 41, 63, 0.4);
+}
+
+/* ギャラリー */
+.gallery-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 22px; }
+.gallery-item{ background: var(--bg-panel); border: 1px solid var(--border-faint); transition: border-color 0.25s ease; }
+.gallery-item:hover{ border-color: var(--border-blood); }
+.gallery-caption{ padding: 14px 16px; }
+.gallery-caption .g-title{ font-family: var(--font-heading); font-size: 14px; color: var(--text-main); margin-bottom: 4px; }
+.gallery-caption .g-meta{ display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 10px; color: var(--text-faint); }
+.gallery-caption .g-meta .g-char{ color: var(--accent-blood); }
+
+/* DATA BANKタブ */
+.lore-overview{ font-size: 14px; color: var(--text-muted); max-width: 46em; }
+.lore-overview p + p{ margin-top: 14px; }
+
+.char-tabs{ display: flex; flex-wrap: wrap; gap: 6px 20px; border-bottom: 1px solid var(--border-faint); margin-bottom: 40px; }
+.char-tab-btn{
+  background: none; border: none; border-bottom: 2px solid transparent;
+  font-family: var(--font-heading); font-size: 14px; color: var(--text-muted);
+  padding: 10px 2px; cursor: pointer; transition: color 0.25s ease, border-color 0.25s ease;
+}
+.char-tab-btn:hover, .char-tab-btn.is-active{ color: var(--text-main); border-bottom-color: var(--accent-blood); }
+.char-detail-panel{ display: none; }
+.char-detail-panel.is-active{ display: block; animation: page-in 0.4s ease; }
+
+.char-detail-head{ display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
+.char-detail-head .name-en{ font-family: var(--font-display); font-size: 11px; letter-spacing: 0.2em; color: var(--accent-blood); }
+.char-detail-head h3{ font-size: 22px; }
+
+.stat-grid{ display: grid; grid-template-columns: auto 1fr; row-gap: 10px; column-gap: 22px; font-size: 13px; max-width: 38em; margin: 22px 0 8px; }
+.stat-grid dt{ color: var(--text-faint); font-size: 11px; letter-spacing: 0.08em; padding-top: 2px; }
+.stat-grid dd{ color: var(--text-main); }
+
+.panel-subhead{
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 0.25em; color: var(--accent-blood); margin: 34px 0 14px;
+}
+.panel-subhead::after{ content: ""; flex: 1; height: 1px; background: var(--border-faint); }
+.trivia-list{ display: flex; flex-direction: column; gap: 10px; }
+.trivia-list li{ position: relative; padding-left: 18px; font-size: 13px; color: var(--text-muted); line-height: 1.85; }
+.trivia-list li::before{ content: "✚"; position: absolute; left: 0; top: 3px; font-size: 9px; color: var(--accent-blood); }
+
+/* GLOSSARY */
+.lore-category{ margin-bottom: 52px; }
+.lore-category-head{ display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.lore-category-head h3{ font-size: 15px; letter-spacing: 0.15em; color: var(--text-main); }
+.lore-category-head .count{ font-size: 11px; color: var(--text-faint); }
+.lore-category-head::after{ content: ""; flex: 1; height: 1px; background: var(--border-faint); }
+.lore-entry{ background: var(--bg-panel); border-left: 2px solid var(--border-blood); padding: 18px 22px; }
+.lore-entry + .lore-entry{ margin-top: 14px; }
+.lore-entry-head{ display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.lore-entry h4{ font-family: var(--font-heading); font-size: 15px; color: var(--text-main); }
+.lore-tag{ font-size: 11px; color: var(--accent-bright); }
+.lore-entry p{ font-size: 13px; color: var(--text-muted); line-height: 1.85; }
+
+/* フッター */
+footer{ width: 100%; max-width: var(--content-max); margin-top: 120px; padding-top: 30px; border-top: 1px solid var(--border-faint); text-align: center; font-size: 11px; color: var(--text-faint); }
+
+/* ============================================================
+   音楽プレイヤー
+   ============================================================ */
+.music-player{
+position: fixed; right: 22px; bottom: 22px; width: 240px;
+  background: var(--bg-panel); border: 1px solid var(--border-blood);
+  box-shadow: 0 12px 34px rgba(0,0,0,0.55); z-index: 200;
+  border-radius: 12px; /* ★本体の角丸 */
+}
+.mp-header{ 
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px; 
+  border-bottom: 1px solid var(--border-faint); cursor: pointer; 
+  border-radius: 11px 11px 0 0; /* ★上側の左右だけ角丸にする */
+}
+.mp-header .mp-icon{ color: var(--accent-blood); font-size: 12px; }
+.mp-header .mp-heading{ flex: 1; font-family: var(--font-display); font-size: 10px; letter-spacing: 0.18em; color: var(--text-muted); }
+.mp-toggle{ background: none; border: none; color: var(--text-faint); font-size: 10px; cursor: pointer; transition: transform 0.25s ease; }
+.music-player.is-collapsed .mp-toggle{ transform: rotate(-90deg); }
+.music-player.is-collapsed .mp-body{ display: none; }
+
+.mp-body{ padding: 14px; }
+.mp-now-playing{ margin-bottom: 12px; }
+.mp-track-title{ font-family: var(--font-heading); font-size: 13px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mp-track-desc{ font-size: 11px; color: var(--text-faint); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.mp-controls{ display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 14px; }
+.mp-btn{ background: none; border: none; color: var(--text-muted); font-size: 15px; cursor: pointer; transition: color 0.2s ease; }
+.mp-btn:hover{ color: var(--accent-bright); }
+.mp-btn-play{ width: 34px; height: 34px; border: 1px solid var(--border-blood); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-main); }
+
+.mp-dropdown{ position: relative; margin-bottom: 12px; }
+.mp-dropdown-toggle{
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg-panel-alt); border: 1px solid var(--border-faint);
+  color: var(--text-main); font-size: 11px; padding: 7px 10px; cursor: pointer;
+}
+.mp-dropdown-toggle .mp-dropdown-label{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mp-dropdown-arrow{ color: var(--accent-blood); font-size: 9px; transition: transform 0.25s ease; }
+.mp-dropdown.is-open .mp-dropdown-arrow{ transform: rotate(180deg); }
+
+/* ドロップダウンリスト（グループ対応） */
+.mp-dropdown-list{
+  position: absolute; left: 0; right: 0; bottom: calc(100% + 6px);
+  background: var(--bg-panel); border: 1px solid var(--border-blood);
+  max-height: 200px; overflow-y: auto; display: none; z-index: 20;
+}
+.mp-dropdown.is-open .mp-dropdown-list{ display: block; }
+.mp-group-header{
+  padding: 8px 10px 4px; font-family: var(--font-heading); font-size: 10px;
+  color: var(--accent-blood); background: var(--bg-void); letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border-faint); position: sticky; top: 0; z-index: 2;
+}
+.mp-dropdown-item{ padding: 8px 12px 8px 18px; font-size: 11px; color: var(--text-muted); cursor: pointer; border-bottom: 1px solid var(--border-faint); }
+.mp-dropdown-item:hover, .mp-dropdown-item.is-selected{ color: var(--accent-bright); background: var(--bg-panel-alt); }
+
+.mp-volume{ display: flex; align-items: center; gap: 8px; }
+.mp-volume-icon{ color: var(--accent-blood); font-size: 11px; }
+.mp-volume input[type="range"]{ flex: 1; -webkit-appearance: none; appearance: none; height: 3px; background: var(--border-faint); outline: none; cursor: pointer; }
+.mp-volume input[type="range"]::-webkit-slider-thumb{ -webkit-appearance: none; width: 11px; height: 11px; border-radius: 50%; background: var(--accent-blood); }
+
+.mp-yt-hidden{ position: fixed; right: 0; bottom: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; }
+
+/* モーダル */
+body.modal-open{ overflow: hidden; }
+.welcome-modal{
+  position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
+  padding: 24px; background: radial-gradient(ellipse 800px 520px at 50% 28%, rgba(140,28,43,0.14), transparent 62%), rgba(5,4,5,0.97);
+  transition: opacity 0.6s ease;
+}
+.welcome-modal.is-hidden{ opacity: 0; pointer-events: none; }
+.welcome-modal-inner{ width: 100%; max-width: 440px; text-align: center; background: var(--bg-panel); border: 1px solid var(--border-blood); padding: 52px 38px; }
+.welcome-modal-ornament{ color: var(--accent-blood); font-size: 14px; letter-spacing: 0.35em; margin-bottom: 26px; }
+.welcome-modal-title{ font-family: var(--font-heading); font-size: 19px; line-height: 1.9; color: var(--text-main); margin-bottom: 8px; }
+.welcome-modal-sub{ font-size: 12px; color: var(--text-faint); margin-bottom: 36px; }
+.welcome-modal-actions{ display: flex; flex-direction: column; gap: 14px; }
+.welcome-btn{ font-family: var(--font-display); font-size: 12px; letter-spacing: 0.15em; padding: 15px 20px; border: 1px solid var(--border-blood); background: transparent; color: var(--text-main); cursor: pointer; }
+.welcome-btn-on{ background: var(--accent-blood); border-color: var(--accent-blood); }
+.welcome-btn-on:hover{ background: var(--accent-bright); border-color: var(--accent-bright); }
+.welcome-btn-off{ color: var(--text-muted); }
+.welcome-btn-off:hover{ color: var(--text-main); border-color: var(--accent-bright); }
+
+/* レスポンシブ */
+@media (max-width: 880px){
+  /* iOS Safariでは background-attachment:fixed が不安定なため、
+     モバイルでは通常のスクロール背景に切り替える */
+  body{ background-attachment: scroll; }
+
+  .sidebar{
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 16px 20px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-blood);
+  }
+
+  .site-mark{ flex-direction: row; align-items: baseline; gap: 10px; }
+  .site-mark .ornament,
+  .site-mark .title-sub{ display: none; }
+  .site-mark .title-en{ font-size: 20px; }
+
+  /* チャプターナビは横スクロールにして折り返しによる崩れを防止 */
+  .chapter-nav{
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0;
+    margin: 0 -20px;
+    padding: 0 20px 4px;
+  }
+  .chapter-nav a{
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 10px 14px;
+  }
+  .chapter-nav a:hover,
+  .chapter-nav a.is-current{ padding-left: 14px; }
+
+  .nav-divider{ display: none; }
+  .nav-secondary{ display: flex; flex-wrap: wrap; gap: 6px 16px; }
+
+  .sidebar-foot{ display: none; }
+
+  .main{ margin-left: 0; padding: 40px 20px 160px; }
+  .section-head h2{ font-size: 24px; }
+
+  /* DATA BANKのキャラクタータブも横スクロールに */
+  .char-tabs{
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+  .char-tab-btn{ flex: 0 0 auto; white-space: nowrap; }
+
+  .music-player{ width: 220px; }
+}
+
+@media (max-width: 520px){
+  .author-note{ flex-direction: column; align-items: center; text-align: center; }
+
+  .page-nav{ flex-direction: column; gap: 16px; }
+  .page-nav .next{ text-align: left; margin-left: 0; }
+
+  /* カード類は2カラムに収まるよう最小幅を縮小 */
+  .character-grid{ grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+  .gallery-grid{ grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+
+  .stat-grid{ column-gap: 14px; font-size: 12px; }
+
+  .music-player{ right: 10px; bottom: 10px; width: 190px; }
+  .mp-body{ padding: 12px; }
+  .mp-controls{ gap: 16px; }
+
+  .welcome-modal{ padding: 16px; }
+  .welcome-modal-inner{ padding: 34px 22px; }
+  .welcome-modal-ornament{ margin-bottom: 18px; }
+  .welcome-modal-title{ font-size: 16px; }
+  .welcome-modal-actions{ gap: 10px; }
+  .welcome-btn{ padding: 13px 16px; font-size: 11px; letter-spacing: 0.08em; }
+}
+
+@media (max-width: 360px){
+  .music-player{ width: 168px; }
+  .mp-track-title{ font-size: 12px; }
+  .character-grid,
+  .gallery-grid{ grid-template-columns: 1fr 1fr; }
+}
+
+ /* --- ⑤ 箔押し・ホログラフィックカード演出 --- */
+.character-grid {
+  perspective: 1000px;
+}
+
+.character-card {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out, border-color 0.25s ease, box-shadow 0.25s ease;
+  will-change: transform;
+}
+
+.character-card:hover {
+  border-color: var(--accent-bright);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(201, 41, 63, 0.4);
+}
+
+/* ホログラム箔押しレイヤー（細め・シャープな純銀ライン） */
+.character-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* %の幅を極端に狭くして、一閃する細い銀の光線にする */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 42%, /* 45%まで透明 */
+    rgba(255, 255, 255, 0.35) 50%, /* 50%の一瞬だけ鋭く光る */
+    rgba(255, 255, 255, 0) 58%, /* 55%で再び透明へ */
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 200%;
+  background-position: var(--holo-x, 50%) var(--holo-y, 50%);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+}
+
+.character-card:hover::after {
+  opacity: 0.35;
+}
+
+/* キャンバスを一番奥の背景に配置する */
+#particleCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* マウス操作を邪魔しない設定 */
+  z-index: 1; /* 背景とコンテンツの間に配置 */
+}
+
+/* クリックエフェクト用のスタイル */
+.click-effect {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--accent-bright); /* 深紅〜赤く光る線 */
+  border-radius: 50%;
+  pointer-events: none; /* クリックを邪魔しない */
+  transform: translate(-50%, -50%) scale(0.5);
+  animation: click-pop 0.6s ease-out forwards;
+  z-index: 9999; /* 画面の一番手前に表示 */
+}
+
+@keyframes click-pop {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
+    box-shadow: 0 0 10px var(--accent-bright);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.5);
+    box-shadow: 0 0 0px var(--accent-bright);
+  }
+}
+
+/* --- LORE用 魔導書封印解除（アコーディオン） --- */
+.chrono-item {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-faint);
+  border-left: 3px solid var(--accent-blood);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 封印時のヘッダー（タップ領域） */
+.chrono-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg-panel-alt);
+  transition: background 0.3s ease;
+}
+
+.chrono-head:hover {
+  background: rgba(140, 28, 43, 0.2); /* ホバーで少し明るい深紅に */
+}
+
+.chrono-head h3 {
+  font-size: 1.05rem;
+  color: var(--text-main);
+  margin: 0;
+}
+
+/* 封印マーク（✦） */
+.chrono-seal {
+  font-size: 11px;
+  color: var(--accent-blood);
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+  transition: transform 0.4s ease, color 0.3s ease, text-shadow 0.3s ease;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
+/* 本文エリア（初期状態は閉じる） */
+.chrono-body {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 18px;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), opacity 0.3s ease, padding 0.3s ease;
+}
+
+.chrono-body p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.85;
+}
+
+/* ★ 解除状態 (is-open) */
+.chrono-item.is-open {
+  border-left-color: var(--accent-bright);
+  box-shadow: 0 0 15px rgba(201, 41, 63, 0.25);
+}
+
+.chrono-item.is-open .chrono-seal {
+  transform: rotate(180deg) scale(1.1);
+  color: var(--accent-bright);
+  text-shadow: 0 0 8px var(--accent-bright);
+}
+
+.chrono-item.is-open .chrono-body {
+  max-height: 300px; /* 本文の長さに合わせて展開 */
+  opacity: 1;
+  padding: 14px 18px 18px;
+}
+
+/* --- ④ マウスカーソル魔力軌跡用キャンバス --- */
+#cursor-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* マウス操作を透過 */
+  z-index: 9998; /* 最前面の手前に配置 */
+}
+
+/* --- 結界スクロール演出（サイズ小さめ版） --- */
+/* --- 結界（魔法陣）セクションの調整 --- */
+.barrier-section {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* 上下の文章と重ならないよう、しっかりと隙間（余白）を作る */
+  margin: 40px auto; 
+  padding: 20px 0;
+  
+  /* 高さを魔法陣のサイズに合わせる */
+  min-height: 160px; 
+  width: 100%;
+}
+
+.barrier-ring {
+  /* absoluteのままで大丈夫ですが、barrier-sectionの中央に収まります */
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.3) rotate(-90deg);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease-out;
+  filter: drop-shadow(0 0 8px rgba(201, 41, 63, 0.8));
+}
+
+.barrier-ring.is-active {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  animation: barrierPulse 4s infinite alternate ease-in-out;
+}
+
+@keyframes barrierPulse {
+  0% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 10px rgba(201, 41, 63, 0.6));
+  }
+  100% {
+    transform: scale(1.05) rotate(15deg);
+    filter: drop-shadow(0 0 25px rgba(201, 41, 63, 1));
+  }
+}
+
+/* --- BGMプレイヤー 魔法陣回転演出 --- */
+.mp-header .mp-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+/* アイコンの後ろに薄く魔法陣を配置 */
+.mp-header .mp-icon::before {
+  content: "";
+  position: absolute;
+  inset: -6px; /* アイコンより少し大きく広げる */
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='100' cy='100' r='90' stroke='rgba(201, 41, 63, 0.8)' stroke-width='4' fill='none'/%3E%3Cpolygon points='100,20 169,140 31,140' stroke='rgba(201, 41, 63, 0.6)' stroke-width='3' fill='none'/%3E%3Cpolygon points='100,180 169,60 31,60' stroke='rgba(201, 41, 63, 0.6)' stroke-width='3' fill='none'/%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* 音楽再生中（is-playingクラスが付いたとき）に回転 */
+.music-player.is-playing .mp-header .mp-icon::before {
+  opacity: 0.9;
+  animation: mpRingRotate 8s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(201, 41, 63, 0.8));
+}
+
+@keyframes mpRingRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* --- 画面右上 固定配置の赤い月食 --- */
+.top-right-moon-wrapper {
+  position: fixed;
+  top: 24px;
+  right: 30px;
+  z-index: 5; /* メインコンテンツの背景寄りに配置 */
+  pointer-events: none; /* クリック操作を妨げない */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moon-container {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(201, 41, 63, 0.5), 0 0 30px rgba(140, 28, 43, 0.3);
+  overflow: hidden;
+}
+
+/* 月本体 */
+.moon {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e63946, #8c1c2b 60%, #2b050b 90%);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* 月食を引き起こす影 */
+.moon-shadow {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #0a0809; /* 背景と同色にして影に見せる */
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: eclipseAnimation 40s infinite ease-in-out;
+}
+
+/* 月食アニメーション */
+@keyframes eclipseAnimation {
+  0% {
+    transform: translateX(-105%);
+    opacity: 0;
+  }
+  30% {
+    transform: translateX(-35%);
+    opacity: 0.92;
+  }
+  50% {
+    transform: translateX(105%);
+    opacity: 0;
+  }
+  80% {
+    transform: translateX(-25%);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(-105%);
+    opacity: 0;
+  }
+}
+
+/* スマホ表示時は邪魔にならないよう少し小さくして位置調整 */
+@media (max-width: 880px) {
+  .top-right-moon-wrapper {
+    top: 12px;
+    right: 16px;
+  }
+  .moon-container {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* --- 3Dホバー＆フリップを両立するカードCSS --- */
+.character-grid {
+  perspective: 1000px;
+}
+
+.character-card {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  /* 3D変換の視点を保持 */
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out; /* マウス追従をスムーズに */
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none; /* 子要素へのイベント貫通を防ぎ滑らかに */
+}
+
+/* 裏返り状態 */
+.character-card.is-flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+/* 表面・裏面の共通設定 */
+.card-front, .card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-faint);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 4px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  pointer-events: auto;
+}
+
+/* ホバー時に枠線と赤いグロー（発光）を強調 */
+.character-card:hover .card-front,
+.character-card:hover .card-back {
+  border-color: var(--accent-bright);
+  box-shadow: 0 10px 25px rgba(201, 41, 63, 0.35);
+}
+
+/* 裏面の設定（画像のみ） */
+.card-back {
+  transform: rotateY(180deg);
+  border-color: var(--border-blood);
+  background: var(--bg-panel-alt);
+}
+
+.card-back .img-frame {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border-bottom: none;
+}
+
+.flip-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 9px;
+  font-family: var(--font-display);
+  color: var(--accent-bright);
+  background: rgba(10, 8, 9, 0.85);
+  border: 1px solid var(--border-blood);
+  padding: 2px 6px;
+  border-radius: 3px;
+  z-index: 10;
+  letter-spacing: 0.1em;
+}
+
+.card-back .flip-badge {
+  color: #ff8093;
+}
+
+</style>
+</head>
+<body class="modal-open">
+
+<!-- 画面右上の赤い月食アニメーション -->
+<div class="top-right-moon-wrapper">
+  <div class="moon-container">
+    <div class="moon"></div>
+    <div class="moon-shadow"></div>
+  </div>
+</div>
+
+  <!-- 背景用パーティクルキャンバス -->
+<canvas id="particleCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
+
+<!-- モーダル -->
+<div class="welcome-modal" id="welcomeModal">
+  <div class="welcome-modal-inner">
+    <div class="welcome-modal-ornament">✦ ✦ ✦</div>
+    <h2 class="welcome-modal-title">このサイトではBGMが流れます。<br>音声を有効にしますか？</h2>
+    <p class="welcome-modal-sub">この先 - 魔界の入り口</p>
+    <div class="welcome-modal-actions">
+      <button type="button" class="welcome-btn welcome-btn-on" id="welcomeBtnOn">BGMをONにして入る</button>
+      <button type="button" class="welcome-btn welcome-btn-off" id="welcomeBtnOff">OFFで入る</button>
+    </div>
+  </div>
+</div>
+
+<!-- サイドバー -->
+<nav class="sidebar">
+  <div class="site-mark">
+    <span class="ornament">✦ ✦ ✦</span>
+    <span class="title-en">NOCTURNE</span>
+    <span class="title-sub">— 666:Step Beyond —</span>
+  </div>
+
+  <ul class="chapter-nav">
+    <li><a href="#prologue" data-nav-link><span class="roman">✦</span>PROLOGUE</a></li>
+    <li><a href="#worldview" data-nav-link><span class="roman">I</span>LORE</a></li>
+    <li><a href="#character" data-nav-link><span class="roman">II</span>CHARACTERS</a></li>
+    <li><a href="#setting" data-nav-link><span class="roman">III</span>DATA BANK</a></li>
+    <li><a href="#lore" data-nav-link><span class="roman">IV</span>GLOSSARY</a></li>
+    <li><a href="#gallery" data-nav-link><span class="roman">V</span>GALLERY</a></li>
+  </ul>
+
+  <div class="nav-divider"></div>
+  <ul class="nav-secondary">
+    <li><a href="#profile" data-nav-link>PROFILE</a></li>
+  </ul>
+
+  <p class="sidebar-foot">EST. 2026<br>Since the moon first rose.</p>
+</nav>
+
+<main class="main">
+
+<!-- PROLOGUE. はじめに -->
+  <section id="prologue" class="page">
+    <div class="section-head">
+      <div class="eyebrow">PROLOGUE</div>
+      <h2>はじめに</h2>
+      <p class="section-lead">NOCTURNEへようこそ。</p>
+    </div>
+    <div class="lore-overview">
+      <blockquote style="border-left: 2px solid #555; padding-left: 15px; margin: 20px 0; color: #ccc;">
+        <p style="font-style: italic; font-family: 'Georgia', serif;">
+          "Past covenants and forbidden trials alike; all are swallowed by the shadows of Nox Aeterna."
+        </p>
+        <p style="text-align: right; font-size: 0.85rem; color: #888;">
+          —— Marquis Amon
+        </p>
+      </blockquote>
+
+      <p><br>管理者より：<br>アモン様の許可のもと、最新の観測データおよび被験体記録を追記・管理しています。<br>無断での持ち出し・解析行為は固く禁じます。<br>キャラクターごとにBGMを用意しています。ミニプレイヤーから曲を変更できます。<br><br></p>
+
+      <!-- ★ 1. 結界演出（独立したブロックとして記述） -->
+      <div class="barrier-section">
+        <div class="barrier-ring" id="barrierRingPrologue">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="90" stroke="rgba(201, 41, 63, 0.8)" stroke-width="2" fill="none" />
+            <circle cx="100" cy="100" r="80" stroke="rgba(201, 41, 63, 0.4)" stroke-width="1" stroke-dasharray="4 4" fill="none" />
+            <polygon points="100,20 169,60 169,140 100,180 31,140 31,60" stroke="rgba(201, 41, 63, 0.6)" stroke-width="1.5" fill="none" />
+            <polygon points="100,20 169,140 31,140" stroke="rgba(201, 41, 63, 0.4)" stroke-width="1" fill="none" />
+            <polygon points="100,180 169,60 31,60" stroke="rgba(201, 41, 63, 0.4)" stroke-width="1" fill="none" />
+          </svg>
+        </div>
+      </div><!-- ★ ここでしっかりと閉じます -->
+
+      <!-- ★ 2. 結界の下に表示される文章 -->
+      <p style="text-align: center; margin: 40px 0; line-height: 1.8;">
+        <b>「血の匂いが消える前に、どうか星の狂わない夢を」</b><br>
+        <span style="font-size: 0.75rem; color: #888;">
+          —— 深淵を往く者たちへ贈る、常闇の挨拶
+        </span>
+      </p>
+
+      <!-- フィクション表記 -->
+      <div style="margin-top: 40px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: right;">
+        <p style="font-size: 0.65rem; color: #666666; opacity: 0.9; letter-spacing: 0.05em; font-family: sans-serif;">
+          FICTIONAL NOTICE: All characters, organizations, and events are purely fictional.
+        </p>
+      </div>
+
+    </div><!-- /.lore-overview -->
+
+    <div class="page-nav">
+      <span></span>
+      <a href="#worldview" class="next">次のチャプター →<span class="label">LORE</span></a>
+    </div>
+  </section>
+
+  <!-- I. LORE -->
+  <section id="worldview" class="page">
+    <div class="section-head">
+      <div class="eyebrow">CHAPTER I</div>
+      <h2>LORE</h2>
+      <p class="section-lead">物語の舞台となる世界について。</p>
+    </div>
+
+    
+    <div class="lore-overview">
+      
+  <p style="font-size: 1.2rem; font-weight: bold; color: var(--accent-light); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-top: 24px;">
+  ——冥王紀から契約暦へ
+</p>
+
+<p>
+  かつて一万年以上続いた「冥王紀」は終焉を迎え、現在は人間界との間に結ばれた『契約』に基づく契約暦（Pact Era / P.E.）1326年。<br>
+魔界は人間界の継続的な監視下に置かれ、契約の維持と更新によってかろうじてその均衡を保っている.
+</p>
+
+<p style="margin-top: 24px;">
+  <p style="font-size: 1.2rem; font-weight: bold; color: var(--accent-light); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-top: 24px;">
+ 蝕まれる境界と古代の謎
+</p>
+
+<p>
+  近年、魔界各地で原因不明の「境界事故」が急増。契約更新の頻度は上がり、古代魔術で動く旧施設の不調や未解明区域の異変が顕著化している。<br>
+契約の延命、膨れ上がる怪異、そして沈黙する王族——魔界は緩やかな歪みの渦中にある。
+</p>
+<br>
+
+<!-- 区切りライン（中央飾り付き） -->
+<div style="display: flex; align-items: center; text-align: center; margin: 32px 0; color: var(--accent-light);">
+  <div style="flex-grow: 1; height: 1px; background: linear-gradient(to right, transparent, var(--accent-light));"></div>
+  <span style="padding: 0 12px; font-size: 0.8rem; opacity: 0.8;">◆</span>
+  <div style="flex-grow: 1; height: 1px; background: linear-gradient(to left, transparent, var(--accent-light));"></div>
+</div>
+
+<br>
+<p style="margin-top: 24px;">
+  <p style="font-size: 1.2rem; font-weight: bold; color: var(--accent-light); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-top: 24px;">
+ ——時代の歩み
+</p>
+
+<div class="chronology-list" style="margin-top: 20px;">
+  <!-- 出来事 1 -->
+  <div class="chrono-item">
+    <div class="chrono-head">
+      <h3>P.E. 0000 年前後 ｜ 【契約成立】</h3>
+      <span class="chrono-seal">✦ 封印中</span>
+    </div>
+    <div class="chrono-body">
+      <p>冥王戦争の終結と人間界との契約成立。旧来の支配体系が崩壊し、契約暦（Pact Era）が開始される。</p>
+    </div>
+  </div>
+
+  <!-- 出来事 2 -->
+  <div class="chrono-item">
+    <div class="chrono-head">
+      <h3>P.E. 1107 - 1206 年 ｜ 【サンクトゥム・テネブリスの変質】</h3>
+      <span class="chrono-seal">✦ 封印中</span>
+    </div>
+    <div class="chrono-body">
+      <p>研究施設の建造と再生錬成部の発足。契約延命・境界維持を名目とした非人道的な禁忌研究が水面下で加速。</p>
+    </div>
+  </div>
+
+  <!-- 出来事 3 -->
+  <div class="chrono-item">
+    <div class="chrono-head">
+      <h3>P.E. 1265 年 ｜ 【北方境界暴走事故】</h3>
+      <span class="chrono-seal">✦ 封印中</span>
+    </div>
+    <div class="chrono-body">
+      <p>アスター王家崩壊。若きルシアンが白王位を継承し、軍事主導の過酷な統轄体制へ移行。</p>
+    </div>
+  </div>
+
+  <!-- 出来事 4 -->
+  <div class="chrono-item">
+    <div class="chrono-head">
+      <h3>P.E. 1326 年（現在） ｜ 【軋みゆく世界】</h3>
+      <span class="chrono-seal">✦ 封印中</span>
+    </div>
+    <div class="chrono-body">
+      <p>古代施設の不調、不気味な星の異変、収容資産の逸脱。歪みを孕んだまま、魔界は次なる刻限を迎えようとしている。</p>
+    </div>
+  </div>
+</div>
+
+<br>
+
+    <!-- ★ ここに結界演出用のHTML（<div class="barrier-section">...</div>）を挿入 -->
+    <div class="barrier-section">
+      <div class="barrier-ring" id="barrierRing">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="90" stroke="rgba(201, 41, 63, 0.8)" stroke-width="2" fill="none" />
+          <circle cx="100" cy="100" r="80" stroke="rgba(201, 41, 63, 0.4)" stroke-width="1" stroke-dasharray="4 4" fill="none" />
+          <polygon points="100,20 169,60 169,140 100,180 31,140 31,60" stroke="rgba(201, 41, 63, 0.6)" stroke-width="1.5" fill="none" />
+          <polygon points="100,20 169,140 31,140" stroke="rgba(201, 41, 63, 0.4)" stroke-width="1" fill="none" />
+          <polygon points="100,180 169,60 31,60" stroke="rgba(201, 41, 63, 0.4)" stroke-width="1" fill="none" />
+        </svg>
+      </div>
+      
+      <div class="barrier-content">
+        <!-- 結界の中に表示したい要素があればここに入れます -->
+      </div>
+    </div>
+
+ <!-- ページ移動ナビゲーション -->
+    <div class="page-nav">
+      <a href="#prologue" class="prev">← 前のチャプター<span class="label">PROLOGUE</span></a>
+      <a href="#character" class="next">次のチャプター →<span class="label">CHARACTERS</span></a>
+    </div>
+
+  </section>
+
+  <!-- II. CHARACTERS -->
+  <section id="character" class="page">
+    <div class="section-head">
+      <div class="eyebrow">CHAPTER II</div>
+      <h2>CHARACTERS</h2>
+      <p class="section-lead">物語の中に棲む者たちの記録。</p>
+    </div>
+    <div class="character-grid">
+      
+      <!-- キャラクター 01 -->
+      <div class="character-item-wrap">
+        <article class="character-card">
+          <div class="card-inner">
+            <!-- 表面 -->
+            <div class="card-front">
+              <span class="flip-badge">REVERSE ↻</span>
+              <div class="img-frame"><span class="placeholder-text">NO IMAGE</span></div>
+              <div class="card-body">
+                <div class="name-en">CHARACTER 01</div>
+                <h3 class="name">Amon = Vallcent = Graviel</h3>
+                <div class="tag-row"><span class="tag">表の姿</span></div>
+                <p class="desc">1人目の通常プロフィール文章。</p>
+              </div>
+            </div>
+            <!-- 裏面（画像のみ） -->
+            <div class="card-back">
+              <span class="flip-badge">FRONT ↻</span>
+              <div class="img-frame">
+                <img src="images/char01_back.png" alt="キャラクター1 裏">
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="card-action">
+          <a href="#setting" class="learn-more-btn" onclick="openCharTab('char-panel-1', 'char-tab-1')">LEARN MORE ＞</a>
+        </div>
+      </div>
+
+      <!-- キャラクター 02 -->
+      <div class="character-item-wrap">
+        <article class="character-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <span class="flip-badge">REVERSE ↻</span>
+              <div class="img-frame"><span class="placeholder-text">NO IMAGE</span></div>
+              <div class="card-body">
+                <div class="name-en">CHARACTER 02</div>
+                <h3 class="name">キャラクター名 2</h3>
+                <div class="tag-row"><span class="tag">表の姿</span></div>
+                <p class="desc">2人目の通常プロフィール文章。</p>
+              </div>
+            </div>
+            <!-- 裏面（画像のみ） -->
+            <div class="card-back">
+              <span class="flip-badge">FRONT ↻</span>
+              <div class="img-frame">
+                <img src="images/char02_back.png" alt="キャラクター2 裏">
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="card-action">
+          <a href="#setting" class="learn-more-btn" onclick="openCharTab('char-panel-2', 'char-tab-2')">LEARN MORE ＞</a>
+        </div>
+      </div>
+
+      <!-- キャラクター 03 -->
+      <div class="character-item-wrap">
+        <article class="character-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <span class="flip-badge">REVERSE ↻</span>
+              <div class="img-frame"><span class="placeholder-text">NO IMAGE</span></div>
+              <div class="card-body">
+                <div class="name-en">CHARACTER 03</div>
+                <h3 class="name">キャラクター名 3</h3>
+                <div class="tag-row"><span class="tag">表の姿</span></div>
+                <p class="desc">3人目の通常プロフィール文章。</p>
+              </div>
+            </div>
+            <!-- 裏面（画像のみ） -->
+            <div class="card-back">
+              <span class="flip-badge">FRONT ↻</span>
+              <div class="img-frame">
+                <img src="images/char03_back.png" alt="キャラクター3 裏">
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="card-action">
+          <a href="#setting" class="learn-more-btn" onclick="openCharTab('char-panel-3', 'char-tab-3')">LEARN MORE ＞</a>
+        </div>
+      </div>
+
+      <!-- キャラクター 04 -->
+      <div class="character-item-wrap">
+        <article class="character-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <span class="flip-badge">REVERSE ↻</span>
+              <div class="img-frame"><span class="placeholder-text">NO IMAGE</span></div>
+              <div class="card-body">
+                <div class="name-en">CHARACTER 04</div>
+                <h3 class="name">キャラクター名 4</h3>
+                <div class="tag-row"><span class="tag">表の姿</span></div>
+                <p class="desc">4人目の通常プロフィール文章。</p>
+              </div>
+            </div>
+            <!-- 裏面（画像のみ） -->
+            <div class="card-back">
+              <span class="flip-badge">FRONT ↻</span>
+              <div class="img-frame">
+                <img src="images/char04_back.png" alt="キャラクター4 裏">
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="card-action">
+          <a href="#setting" class="learn-more-btn" onclick="openCharTab('char-panel-4', 'char-tab-4')">LEARN MORE ＞</a>
+        </div>
+      </div>
+
+      <!-- キャラクター 05 -->
+      <div class="character-item-wrap">
+        <article class="character-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <span class="flip-badge">REVERSE ↻</span>
+              <div class="img-frame"><span class="placeholder-text">NO IMAGE</span></div>
+              <div class="card-body">
+                <div class="name-en">CHARACTER 05</div>
+                <h3 class="name">キャラクター名 5</h3>
+                <div class="tag-row"><span class="tag">表の姿</span></div>
+                <p class="desc">5人目の通常プロフィール文章。</p>
+              </div>
+            </div>
+            <!-- 裏面（画像のみ） -->
+            <div class="card-back">
+              <span class="flip-badge">FRONT ↻</span>
+              <div class="img-frame">
+                <img src="images/char05_back.png" alt="キャラクター5 裏">
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="card-action">
+          <a href="#setting" class="learn-more-btn" onclick="openCharTab('char-panel-5', 'char-tab-5')">LEARN MORE ＞</a>
+        </div>
+      </div>
+
+      <!-- キャラクター 06 -->
+      <div class="character-item-wrap">
+        <article class="character-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <span class="flip-badge">REVERSE ↻</span>
+              <div class="img-frame"><span class="placeholder-text">NO IMAGE</span></div>
+              <div class="card-body">
+                <div class="name-en">CHARACTER 06</div>
+                <h3 class="name">キャラクター名 6</h3>
+                <div class="tag-row"><span class="tag">表の姿</span></div>
+                <p class="desc">6人目の通常プロフィール文章。</p>
+              </div>
+            </div>
+            <!-- 裏面（画像のみ） -->
+            <div class="card-back">
+              <span class="flip-badge">FRONT ↻</span>
+              <div class="img-frame">
+                <img src="images/char06_back.png" alt="キャラクター6 裏">
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="card-action">
+          <a href="#setting" class="learn-more-btn" onclick="openCharTab('char-panel-6', 'char-tab-6')">LEARN MORE ＞</a>
+        </div>
+      </div>
+
+    </div><!-- /.character-grid -->
+  </section>
+
+  <!-- III. DATA BANK -->
+  <section id="setting" class="page">
+    <div class="section-head">
+      <div class="eyebrow">CHAPTER III</div>
+      <h2>DATA BANK</h2>
+      <p class="section-lead">物語の裏側にある細々とした設定について。</p>
+    </div>
+
+    <div class="char-tabs" role="tablist">
+      <button type="button" class="char-tab-btn is-active" id="char-tab-1" data-char-target="char-panel-1">キャラ1</button>
+      <button type="button" class="char-tab-btn" id="char-tab-2" data-char-target="char-panel-2">キャラ2</button>
+      <button type="button" class="char-tab-btn" id="char-tab-3" data-char-target="char-panel-3">キャラ3</button>
+      <button type="button" class="char-tab-btn" id="char-tab-4" data-char-target="char-panel-4">キャラ4</button>
+      <button type="button" class="char-tab-btn" id="char-tab-5" data-char-target="char-panel-5">キャラ5</button>
+      <button type="button" class="char-tab-btn" id="char-tab-6" data-char-target="char-panel-6">キャラ6</button>
+    </div>
+
+    <div class="char-panels">
+      <div class="char-detail-panel is-active" id="char-panel-1">
+        <div class="char-detail-head"><span class="name-en">CHARACTER 01</span><h3>Amon = Vallcent = Graviel</h3></div>
+        <dl class="stat-grid">
+          <dt>種族</dt><dd>設定を記入</dd>
+          <dt>年齢</dt><dd>設定を記入</dd>
+        </dl>
+        <div class="panel-subhead">背景ストーリー</div>
+        <div class="lore-overview"><p>1人目の詳細な背景ストーリーをここに書きます。</p></div>
+      </div>
+
+      <div class="char-detail-panel" id="char-panel-2">
+        <div class="char-detail-head"><span class="name-en">CHARACTER 02</span><h3>キャラクター名 2</h3></div>
+        <dl class="stat-grid">
+          <dt>種族</dt><dd>設定を記入</dd>
+        </dl>
+        <div class="panel-subhead">背景ストーリー</div>
+        <div class="lore-overview"><p>2人目の詳細な背景ストーリーをここに書きます。</p></div>
+      </div>
+
+      <div class="char-detail-panel" id="char-panel-3">
+        <div class="char-detail-head"><span class="name-en">CHARACTER 03</span><h3>キャラクター名 3</h3></div>
+        <dl class="stat-grid">
+          <dt>種族</dt><dd>設定を記入</dd>
+        </dl>
+        <div class="panel-subhead">背景ストーリー</div>
+        <div class="lore-overview"><p>3人目の詳細な背景ストーリーをここに書きます。</p></div>
+      </div>
+
+      <div class="char-detail-panel" id="char-panel-4">
+        <div class="char-detail-head"><span class="name-en">CHARACTER 04</span><h3>キャラクター名 4</h3></div>
+        <dl class="stat-grid">
+          <dt>種族</dt><dd>設定を記入</dd>
+        </dl>
+        <div class="panel-subhead">背景ストーリー</div>
+        <div class="lore-overview"><p>4人目の詳細な背景ストーリーをここに書きます。</p></div>
+      </div>
+
+      <div class="char-detail-panel" id="char-panel-5">
+        <div class="char-detail-head"><span class="name-en">CHARACTER 05</span><h3>キャラクター名 5</h3></div>
+        <dl class="stat-grid">
+          <dt>種族</dt><dd>設定を記入</dd>
+        </dl>
+        <div class="panel-subhead">背景ストーリー</div>
+        <div class="lore-overview"><p>5人目の詳細な背景ストーリーをここに書きます。</p></div>
+      </div>
+
+      <div class="char-detail-panel" id="char-panel-6">
+        <div class="char-detail-head"><span class="name-en">CHARACTER 06</span><h3>キャラクター名 6</h3></div>
+        <dl class="stat-grid">
+          <dt>種族</dt><dd>設定を記入</dd>
+        </dl>
+        <div class="panel-subhead">背景ストーリー</div>
+        <div class="lore-overview"><p>6人目の詳細な背景ストーリーをここに書きます。</p></div>
+      </div>
+    </div>
+
+    <div class="page-nav">
+      <a href="#character" class="prev">← 前のチャプター<span class="label">CHARACTERS</span></a>
+      <a href="#lore" class="next">次のチャプター →<span class="label">GLOSSARY</span></a>
+    </div>
+  </section>
+
+  <!-- IV. GLOSSARY -->
+  <section id="lore" class="page">
+    <div class="section-head">
+      <div class="eyebrow">CHAPTER IV</div>
+      <h2>GLOSSARY</h2>
+      <p class="section-lead">地理・組織・用語など共通設定について。</p>
+    </div>
+    <div class="lore-category">
+      <div class="lore-category-head"><h3>地理</h3><span class="count">1 件</span></div>
+      <article class="lore-entry">
+        <div class="lore-entry-head"><h4>地名・場所</h4><span class="lore-tag">地理</span></div>
+        <p>設定の説明文をここに書きます。</p>
+      </article>
+    </div>
+    <div class="page-nav">
+      <a href="#setting" class="prev">← 前のチャプター<span class="label">DATA BANK</span></a>
+      <a href="#gallery" class="next">次のチャプター →<span class="label">GALLERY</span></a>
+    </div>
+  </section>
+
+  <!-- V. GALLERY -->
+  <section id="gallery" class="page">
+    <div class="section-head">
+      <div class="eyebrow">CHAPTER V</div>
+      <h2>GALLERY</h2>
+      <p class="section-lead">キャラクターたちの絵をまとめた画廊。</p>
+    </div>
+    <div class="gallery-grid">
+      <article class="gallery-item">
+        <div class="img-frame"><span class="placeholder-text">NO IMAGE</span></div>
+        <div class="gallery-caption">
+          <div class="g-title">イラストのタイトル</div>
+          <div class="g-meta"><span class="g-char">キャラクター名</span><span>2026.08</span></div>
+        </div>
+      </article>
+    </div>
+    <div class="page-nav">
+      <a href="#lore" class="prev">← 前のチャプター<span class="label">GLOSSARY</span></a>
+      <a href="#profile" class="next">PROFILEへ →<span class="label">著者について</span></a>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="profile" class="page">
+    <div class="section-head">
+      <div class="eyebrow">AUTHOR</div>
+      <h2 style="font-size:20px;">PROFILE</h2>
+    </div>
+    <div class="author-note">
+      <div class="author-avatar"><span class="placeholder-text">NO<br>IMG</span></div>
+      <div>
+        <div class="author-name-en">YOUR NAME HERE</div>
+        <h3 class="author-name">名前・ハンドルネーム</h3>
+        <p class="author-catch">夜に咲く言葉を、ここに綴る。</p>
+        <div class="author-info">
+          <span>誕生日：<b>〇月〇日</b></span>
+          <span>好物：<b>古い本、深紅のワイン</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="page-nav">
+      <a href="#gallery" class="prev">← 前のチャプター<span class="label">GALLERY</span></a>
+      <a href="#prologue" class="next">最初へ →<span class="label">はじめに</span></a>
+    </div>
+  </section>
+
+  <footer>© P.E. 0000-1326<br>Originally System-Designed by Marquis Amon.<br>Maintained & Archived by Xeno.<br>
+Unauthorized reproduction or AI training is strictly prohibited.<br></footer>
+</main>
+
+<!-- 音楽プレイヤー -->
+<div class="music-player" id="musicPlayer">
+  <div class="mp-header" id="mpHeader">
+    <span class="mp-icon">♪</span>
+    <span class="mp-heading">MUSIC</span>
+    <button type="button" class="mp-toggle" id="mpToggle">▾</button>
+  </div>
+  <div class="mp-body">
+    <div class="mp-now-playing">
+      <div class="mp-track-title" id="mpTrackTitle">読み込み中…</div>
+      <div class="mp-track-desc" id="mpTrackDesc">—</div>
+    </div>
+    <div class="mp-controls">
+      <button type="button" class="mp-btn" id="mpPrev">⏮</button>
+      <button type="button" class="mp-btn mp-btn-play" id="mpPlayPause">▶</button>
+      <button type="button" class="mp-btn" id="mpNext">⏭</button>
+    </div>
+    <div class="mp-dropdown" id="mpDropdown">
+      <button type="button" class="mp-dropdown-toggle" id="mpDropdownToggle">
+        <span class="mp-dropdown-label" id="mpDropdownLabel">曲を選択</span>
+        <span class="mp-dropdown-arrow">▾</span>
+      </button>
+      <ul class="mp-dropdown-list" id="mpDropdownList"></ul>
+    </div>
+    <div class="mp-volume">
+      <span class="mp-volume-icon">♪</span>
+      <input type="range" id="mpVolume" min="0" max="100" value="40">
+    </div>
+  </div>
+  <div id="ytPlayerContainer" class="mp-yt-hidden"></div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+// ページ切り替え
+(function(){
+  var pages = Array.prototype.slice.call(document.querySelectorAll('.page'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('[data-nav-link]'));
+  var defaultId = 'prologue';
+
+  function showPage(id){
+    var exists = pages.some(function(p){ return p.id === id; });
+    if(!exists){ id = defaultId; }
+    pages.forEach(function(p){ p.classList.toggle('is-active', p.id === id); });
+    navLinks.forEach(function(a){ a.classList.toggle('is-current', a.getAttribute('href') === '#' + id); });
+  }
+
+  function currentId(){ return (location.hash || '#' + defaultId).slice(1); }
+  window.addEventListener('hashchange', function(){ showPage(currentId()); window.scrollTo(0, 0); });
+  showPage(currentId());
+})();
+
+// タブ切り替え ＆ LEARN MOREからの連動用関数
+function openCharTab(panelId, tabId) {
+  var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.char-tab-btn'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.char-detail-panel'));
+  
+  tabButtons.forEach(function(b){ b.classList.toggle('is-active', b.id === tabId); });
+  panels.forEach(function(p){ p.classList.toggle('is-active', p.id === panelId); });
+}
+
+(function(){
+  var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.char-tab-btn'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.char-detail-panel'));
+  tabButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var targetId = btn.getAttribute('data-char-target');
+      tabButtons.forEach(function(b){ b.classList.toggle('is-active', b === btn); });
+      panels.forEach(function(p){ p.classList.toggle('is-active', p.id === targetId); });
+    });
+  });
+})();
+
+/* BGM プレイリストの設定 */
+var playlist = [
+  { group: 'Amon', id: 'StZcUAPRRac', title: 'Sonne', desc: 'Rammstein' },
+  { group: 'Amon', id: 'jJdlgKzVsnI', title: 'Streets', desc: 'Doja Cat' },
+  { group: 'Xeno', id: 'El0AfTkxfyM', title: 'Killshot (slowed + reverb)', desc: 'Magdalena Bay' },
+  { group: 'Xeno', id: 'GVQON-muEFc', title: 'Salvatore', desc: 'Lana Del Rey' },
+  { group: 'Vimic', id: 'U8ai37gFvMk', title: 'Painkiller', desc: 'Three Days Grace' },
+  { group: 'Vimic', id: 'qqC5sdsHLq8', title: 'Cure For The Itch', desc: 'Linkin Park' },
+  { group: 'Lucien', id: 'RiZVjfjgNyY', title: 'I\'m God', desc: 'Casino and Imogen Heap' },
+  { group: 'Lucien', id: 'ZJHtN8ofmwQ', title: 'Люди Надоели', desc: 'Molchat Doma' },
+  { group: 'Mira', id: 'RvnkAtWcKYg', title: 'Decode', desc: 'Paramore' },
+  { group: 'Mira', id: '7C4-TAWg7QA', title: 'YAD (Яд)', desc: 'Vanna Rainelle / Eng ver' }
+];
+
+var ytPlayer = null, isPlayerReady = false, pendingAutoplay = false, currentIndex = 0;
+var elTitle, elDesc, elPlayPause, elVolume, elDropdown, elDropdownToggle, elDropdownLabel, elDropdownList, elDropdownItems;
+
+// YouTube API Ready
+window.onYouTubeIframeAPIReady = function(){
+  ytPlayer = new YT.Player('ytPlayerContainer', {
+    height: '90', width: '160', videoId: playlist[0].id,
+    playerVars: { autoplay: 0, controls: 0, modestbranding: 1, rel: 0, playsinline: 1 },
+    events: {
+      onReady: function(e){
+        isPlayerReady = true;
+        e.target.setVolume(40);
+        if(pendingAutoplay){ pendingAutoplay = false; e.target.playVideo(); }
+      },
+      onStateChange: function(e){
+        var mpEl = document.getElementById('musicPlayer');
+        if(e.data === YT.PlayerState.PLAYING){
+          if(elPlayPause) elPlayPause.textContent = '⏸';
+          if(mpEl) mpEl.classList.add('is-playing'); // ★再生中にクラス付与（魔法陣回転）
+        }
+        else if(e.data === YT.PlayerState.PAUSED){
+          if(elPlayPause) elPlayPause.textContent = '▶';
+          if(mpEl) mpEl.classList.remove('is-playing'); // ★停止時にクラス解除
+        }
+        else if(e.data === YT.PlayerState.ENDED){
+          if(mpEl) mpEl.classList.remove('is-playing'); // ★終了時にクラス解除
+          nextTrack();
+        }
+      }
+    }
+  });
+};
+
+function loadTrack(index, autoplay){
+  currentIndex = (index + playlist.length) % playlist.length;
+  if(isPlayerReady){
+    if(autoplay){ ytPlayer.loadVideoById(playlist[currentIndex].id); }
+    else { ytPlayer.cueVideoById(playlist[currentIndex].id); }
+  }
+  updateNowPlaying();
+}
+
+function updateNowPlaying(){
+  if(elTitle) elTitle.textContent = playlist[currentIndex].title;
+  if(elDesc) elDesc.textContent = playlist[currentIndex].desc;
+  if(elDropdownLabel) elDropdownLabel.textContent = playlist[currentIndex].title;
+  if(elDropdownItems){
+    elDropdownItems.forEach(function(item){
+      var idx = parseInt(item.getAttribute('data-index'), 10);
+      item.classList.toggle('is-selected', idx === currentIndex);
+    });
+  }
+}
+
+function togglePlayPause(){
+  if(!isPlayerReady) return;
+  if(ytPlayer.getPlayerState() === YT.PlayerState.PLAYING){ ytPlayer.pauseVideo(); }
+  else { ytPlayer.playVideo(); }
+}
+
+function prevTrack(){ loadTrack(currentIndex - 1, true); }
+function nextTrack(){ loadTrack(currentIndex + 1, true); }
+
+document.addEventListener('DOMContentLoaded', function(){
+  elTitle = document.getElementById('mpTrackTitle');
+  elDesc = document.getElementById('mpTrackDesc');
+  elPlayPause = document.getElementById('mpPlayPause');
+  elVolume = document.getElementById('mpVolume');
+  elDropdown = document.getElementById('mpDropdown');
+  elDropdownToggle = document.getElementById('mpDropdownToggle');
+  elDropdownLabel = document.getElementById('mpDropdownLabel');
+  elDropdownList = document.getElementById('mpDropdownList');
+
+  var currentGroup = null;
+  playlist.forEach(function(track, i){
+    if(track.group !== currentGroup){
+      currentGroup = track.group;
+      var groupHeader = document.createElement('li');
+      groupHeader.className = 'mp-group-header';
+      groupHeader.textContent = '【 ' + currentGroup + ' 】';
+      elDropdownList.appendChild(groupHeader);
+    }
+    var item = document.createElement('li');
+    item.className = 'mp-dropdown-item';
+    item.textContent = track.title;
+    item.setAttribute('data-index', String(i));
+    elDropdownList.appendChild(item);
+  });
+  elDropdownItems = Array.prototype.slice.call(document.querySelectorAll('.mp-dropdown-item'));
+
+  updateNowPlaying();
+
+  elPlayPause.addEventListener('click', togglePlayPause);
+  document.getElementById('mpPrev').addEventListener('click', prevTrack);
+  document.getElementById('mpNext').addEventListener('click', nextTrack);
+
+  elDropdownToggle.addEventListener('click', function(e){
+    e.stopPropagation();
+    elDropdown.classList.toggle('is-open');
+  });
+
+  elDropdownItems.forEach(function(item){
+    item.addEventListener('click', function(){
+      loadTrack(parseInt(item.getAttribute('data-index'), 10), true);
+      elDropdown.classList.remove('is-open');
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if(!elDropdown.contains(e.target)){ elDropdown.classList.remove('is-open'); }
+  });
+
+  elVolume.addEventListener('input', function(){
+    if(isPlayerReady){ ytPlayer.setVolume(parseInt(elVolume.value, 10)); }
+  });
+
+  document.getElementById('mpHeader').addEventListener('click', function(){
+    document.getElementById('musicPlayer').classList.toggle('is-collapsed');
+  });
+
+  var welcomeModal = document.getElementById('welcomeModal');
+  function closeWelcomeModal(){
+    welcomeModal.classList.add('is-hidden');
+    document.body.classList.remove('modal-open');
+    setTimeout(function(){ welcomeModal.style.display = 'none'; }, 650);
+  }
+
+  document.getElementById('welcomeBtnOn').addEventListener('click', function(){
+    if(isPlayerReady && ytPlayer){
+      ytPlayer.playVideo();
+    } else {
+      pendingAutoplay = true;
+    }
+    closeWelcomeModal();
+  });
+  document.getElementById('welcomeBtnOff').addEventListener('click', closeWelcomeModal);
+});
+
+// --- CHARACTERS: 3Dホバー傾き ＆ 光沢演出 ＆ フリップ両立処理 ---
+document.addEventListener('DOMContentLoaded', function() {
+  var charCards = Array.prototype.slice.call(document.querySelectorAll('.character-card'));
+
+  charCards.forEach(function(card) {
+    
+    // 1. マウス移動時の処理（3D傾き ＋ 光沢移動）
+    card.addEventListener('mousemove', function(e) {
+      var rect = card.getBoundingClientRect();
+      var x = e.clientX - rect.left; // カード内のX座標
+      var y = e.clientY - rect.top;  // カード内のY座標
+      
+      var centerX = rect.width / 2;
+      var centerY = rect.height / 2;
+      
+      // 傾き角度の計算（最大12度）
+      var rotateX = ((y - centerY) / centerY) * -12;
+      var rotateY = ((x - centerX) / centerX) * 12;
+
+      // カード自体を傾ける
+      card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateZ(10px)';
+
+      // 光沢（ホログラム）の位置を計算してCSS変数にセット（★ここで光沢が動きます）
+      var holoX = (x / rect.width) * 100;
+      var holoY = (y / rect.height) * 100;
+      card.style.setProperty('--holo-x', holoX + '%');
+      card.style.setProperty('--holo-y', holoY + '%');
+    });
+
+    // 2. マウスが離れたら元に戻す
+    card.addEventListener('mouseleave', function() {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+      card.style.setProperty('--holo-x', '50%');
+      card.style.setProperty('--holo-y', '50%');
+    });
+
+    // 3. クリック時に裏返す
+    card.addEventListener('click', function() {
+      card.classList.toggle('is-flipped');
+    });
+
+  });
+});
+</script>
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+(function(){
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // パーティクルの生成
+  for(let i = 0; i < 45; i++){
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2 + 0.5, // 粒の大きさ
+      speedY: -(Math.random() * 0.4 + 0.1), // 上に昇るスピード
+      speedX: (Math.random() - 0.5) * 0.2,  // 左右の揺れ
+      opacity: Math.random(),
+      fadeSpeed: Math.random() * 0.01 + 0.003
+    });
+  }
+
+  // アニメーション描画
+  function animate(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    particles.forEach(p => {
+      p.y += p.speedY;
+      p.x += p.speedX;
+      p.opacity += p.fadeSpeed;
+
+      if (p.opacity >= 1 || p.opacity <= 0) {
+        p.fadeSpeed = -p.fadeSpeed;
+      }
+
+      // 画面上部に出て消えたら下から再生成
+      if(p.y < 0){
+        p.y = canvas.height;
+        p.x = Math.random() * canvas.width;
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      // 深紅〜金色の淡い光（サイトの雰囲気に合わせたアクセントカラー）
+      ctx.fillStyle = `rgba(201, 41, 63, ${Math.max(0, p.opacity * 0.6)})`;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = '#c9293f';
+      ctx.fill();
+    });
+    
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+</script>
+
+<script>
+// クリック時のふわっと広がる波紋エフェクト
+document.addEventListener('click', function(e) {
+  // エフェクト用の要素を作成
+  const effect = document.createElement('div');
+  effect.className = 'click-effect';
+  
+  // クリックしたカーソルの位置に配置
+  effect.style.left = e.clientX + 'px';
+  effect.style.top = e.clientY + 'px';
+  
+  document.body.appendChild(effect);
+  
+  // アニメーションが終わったら自動で消去
+  setTimeout(() => {
+    effect.remove();
+  }, 600);
+});
+</script>
+
+
+<canvas id="cursor-canvas"></canvas>
+
+<script>
+// LOREの魔導書 封印解除スクリプト
+document.addEventListener('DOMContentLoaded', function() {
+  const chronoHeads = document.querySelectorAll('.chrono-head');
+  
+  chronoHeads.forEach(function(head) {
+    head.addEventListener('click', function() {
+      const item = head.parentElement;
+      const seal = head.querySelector('.chrono-seal');
+      
+      item.classList.toggle('is-open');
+      
+      if (item.classList.contains('is-open')) {
+        seal.textContent = '✧ 解除';
+      } else {
+        seal.textContent = '✦ 封印中';
+      }
+    });
+  });
+});
+
+// --- ④ マウスカーソル魔力軌跡（粒子トレイル） ---
+(function() {
+  const canvas = document.getElementById('cursor-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+  
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  const particles = [];
+
+  window.addEventListener('mousemove', (e) => {
+    for (let i = 0; i < 2; i++) {
+      particles.push({
+        x: e.clientX + (Math.random() - 0.5) * 6,
+        y: e.clientY + (Math.random() - 0.5) * 6,
+        size: Math.random() * 3 + 1,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: Math.random() * -0.8 - 0.3,
+        alpha: 0.5,
+        decay: Math.random() * 0.03 + 0.015,
+        color: Math.random() > 0.3 ? '201, 41, 63' : '255, 80, 100'
+      });
+    }
+  });
+
+  function animate() {
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.025;
+
+      if (p.alpha <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = `rgba(${p.color}, 0.8)`;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+})();
+
+// --- 結界スクロール発動処理（複数対応版） ---
+document.addEventListener('DOMContentLoaded', () => {
+  const barriers = document.querySelectorAll('.barrier-ring');
+  if (!barriers.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-active');
+      } else {
+        entry.target.classList.remove('is-active');
+      }
+    });
+  }, {
+    threshold: 0.2
+  });
+
+  barriers.forEach(barrier => observer.observe(barrier));
+});
+
+</script>
+
+
+</body>
+</html>
