@@ -234,9 +234,11 @@ footer{ width: 100%; max-width: var(--content-max); margin-top: 120px; padding-t
    音楽プレイヤー
    ============================================================ */
 .music-player{
-  position: fixed; right: 22px; bottom: 22px; width: 240px;
+position: fixed; right: 22px; bottom: 22px; width: 240px;
   background: var(--bg-panel); border: 1px solid var(--border-blood);
   box-shadow: 0 12px 34px rgba(0,0,0,0.55); z-index: 200;
+  border-radius: 12px; /* ★角の丸みを追加 */
+  overflow: hidden;    /* ★中身が角からはみ出すのを防ぐ */
 }
 .mp-header{ display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--border-faint); cursor: pointer; }
 .mp-header .mp-icon{ color: var(--accent-blood); font-size: 12px; }
