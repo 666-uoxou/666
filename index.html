@@ -239,9 +239,11 @@ position: fixed; right: 22px; bottom: 22px; width: 240px;
   box-shadow: 0 12px 34px rgba(0,0,0,0.55); z-index: 200;
   border-radius: 12px; /* ★本体の角丸 */
 }
-.mp-header{ display: flex; align-items: center; gap: 8px; padding: 10px 12px; 
+.mp-header{ 
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px; 
   border-bottom: 1px solid var(--border-faint); cursor: pointer; 
-  border-radius: 11px 11px 0 0; /* ★上側の左右だけ角丸にする */ }
+  border-radius: 11px 11px 0 0; /* ★上側の左右だけ角丸にする */
+}
 .mp-header .mp-icon{ color: var(--accent-blood); font-size: 12px; }
 .mp-header .mp-heading{ flex: 1; font-family: var(--font-display); font-size: 10px; letter-spacing: 0.18em; color: var(--text-muted); }
 .mp-toggle{ background: none; border: none; color: var(--text-faint); font-size: 10px; cursor: pointer; transition: transform 0.25s ease; }
