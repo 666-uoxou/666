@@ -37,10 +37,8 @@
 *{ box-sizing: border-box; margin: 0; padding: 0; }
 html{ scroll-behavior: smooth; }
 body{
-  background:
-    radial-gradient(ellipse 900px 600px at 15% -10%, rgba(140,28,43,0.10), transparent 60%),
-    radial-gradient(ellipse 700px 500px at 100% 100%, rgba(140,28,43,0.06), transparent 60%),
-    var(--bg-void);
+  background: linear-gradient(to top, #3d1119 0%, #1a080c 40%, #0a0809 100%);
+  background-attachment: fixed; /* スクロールしてもグラデーションの位置を固定する設定 */
   color: var(--text-main);
   font-family: var(--font-body);
   font-weight: 300;
