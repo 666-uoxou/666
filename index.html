@@ -2528,17 +2528,12 @@ document.addEventListener('DOMContentLoaded', function(){
   document.getElementById('welcomeBtnOff').addEventListener('click', closeWelcomeModal);
 });
 
-// --- 3. CHARACTERS 3Dカード・裏返しアニメーション & ジャイロセンサー ---
+// --- 3. CHARACTERS 3Dカード・裏返しアニメーション ---
 document.addEventListener('DOMContentLoaded', function() {
   var charCards = Array.prototype.slice.call(document.querySelectorAll('.character-card'));
-  var isGyroActive = false; // ジャイロ起動フラグ
 
-  // --- A. PC向け：マウスホバー処理 ---
   charCards.forEach(function(card) {
     card.addEventListener('mousemove', function(e) {
-      // スマホのタッチ操作中やジャイロ動作中はマウス処理をスキップ
-      if (isGyroActive) return;
-
       var rect = card.getBoundingClientRect();
       var x = e.clientX - rect.left;
       var y = e.clientY - rect.top;
@@ -2558,83 +2553,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     card.addEventListener('mouseleave', function() {
-      if (isGyroActive) return;
       card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
       card.style.setProperty('--holo-x', '50%');
       card.style.setProperty('--holo-y', '50%');
     });
 
-    // --- B. カードクリック（裏返し & 炎点火アニメーション） ---
+    // ▼ ここからが修正ポイントです
     card.addEventListener('click', function() {
       card.classList.toggle('is-flipped');
+
       const cardBack = card.querySelector('.card-back');
       
       if (card.classList.contains('is-flipped')) {
-        // 裏返った時は傾きをリセット
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(180deg) translateZ(0px)';
+        // 表→裏に返ったとき：一度アニメーションをリセットして再発火
         cardBack.classList.remove('ignite');
         void cardBack.offsetWidth; // リフロー（再描画）を強制
 
+        // カードが半回転したタイミング（200ms後）で炎を点火！
         setTimeout(function() {
           cardBack.classList.add('ignite');
         }, 200);
       } else {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+        // 裏→表に戻ったとき：炎クラスを消去
         cardBack.classList.remove('ignite');
       }
     });
   });
-
-  // --- C. スマホ向け：ジャイロセンサー（傾き）処理 ---
-  function handleOrientation(event) {
-    // 上下傾き(beta: 約45度で持つのを基準に補正)、左右傾き(gamma)
-    var beta = event.beta || 0;
-    var gamma = event.gamma || 0;
-
-    // 傾き角度の計算（最大 ±15度 に制限）
-    var rotateX = Math.min(Math.max((beta - 45) * 0.4, -15), 15);
-    var rotateY = Math.min(Math.max(gamma * 0.5, -15), 15);
-
-    // 光沢の位置計算（20%〜80%の範囲に収める）
-    var holoX = Math.min(Math.max(50 + (gamma * 0.8), 20), 80);
-    var holoY = Math.min(Math.max(50 + ((beta - 45) * 0.8), 20), 80);
-
-    charCards.forEach(function(card) {
-      // カードが裏返っている場合はジャイロ傾きを適用しない
-      if (card.classList.contains('is-flipped')) return;
-
-      card.style.transform = 'perspective(1000px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateZ(10px)';
-      card.style.setProperty('--holo-x', holoX + '%');
-      card.style.setProperty('--holo-y', holoY + '%');
-    });
-  }
-
-  // --- D. センサー起動の有効化処理（iOS対応） ---
-  function initGyro() {
-    if (typeof DeviceOrientationEvent !== 'undefined') {
-      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // iOS 13+ 用の許可申請
-        DeviceOrientationEvent.requestPermission()
-          .then(function(permissionState) {
-            if (permissionState === 'granted') {
-              isGyroActive = true;
-              window.addEventListener('deviceorientation', handleOrientation);
-            }
-          })
-          .catch(console.error);
-      } else {
-        // Android や 許可申請が不要なブラウザ
-        isGyroActive = true;
-        window.addEventListener('deviceorientation', handleOrientation);
-      }
-    }
-  }
-
-  // 最初に画面（またはウェルカムモーダルのボタンなど）をタップしたタイミングでジャイロを有効化
-  window.addEventListener('touchstart', function firstTouch() {
-    initGyro();
-    window.removeEventListener('touchstart', firstTouch);
-  }, { once: true });
 });
 
 // --- 4. 背景パーティクル（契約状態で自動増量・高速化） ---
