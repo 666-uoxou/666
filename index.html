@@ -263,6 +263,18 @@ a:focus-visible, button:focus-visible{
 .char-detail-panel{ display: none; }
 .char-detail-panel.is-active{ display: block; animation: page-in 0.4s ease; }
 
+/* GLOSSARYタブ（DATA BANKタブと見た目を共有。JSはお互い完全に独立） */
+.lore-tabs{ display: flex; flex-wrap: wrap; gap: 6px 20px; border-bottom: 1px solid var(--border-faint); margin-bottom: 40px; }
+.lore-tab-btn{
+  background: none; border: none; border-bottom: 2px solid transparent;
+  font-family: var(--font-heading); font-size: 14px; color: var(--text-muted);
+  padding: 10px 2px; cursor: pointer; transition: color 0.25s ease, border-color 0.25s ease;
+}
+.lore-tab-btn:hover, .lore-tab-btn.is-active{ color: var(--text-main); border-bottom-color: var(--accent-blood); }
+.lore-tab-panel{ display: none; }
+.lore-tab-panel.is-active{ display: block; animation: page-in 0.4s ease; }
+.lore-tab-panel .lore-category{ margin-bottom: 0; }
+
 .char-detail-head{ display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
 .char-detail-head .name-en{ font-family: var(--font-display); font-size: 11px; letter-spacing: 0.2em; color: var(--accent-blood); }
 .char-detail-head h3{ font-size: 22px; }
@@ -279,9 +291,10 @@ a:focus-visible, button:focus-visible{
 
 /* --- DATA BANK：年代記（タイムライン） ---
    年号と出来事のテキストを差し替えるだけで使えるベース。
+   年号は出来事の上に「バッジ」として表示するため、長い年号でも折り返しで崩れない。
    件数が多いときは max-height を超えた分だけ内側でスクロールする。 */
 .char-timeline{
-  max-height: 260px;
+  max-height: 320px;
   overflow-y: auto;
   padding-right: 10px;
   margin-bottom: 8px;
@@ -295,10 +308,7 @@ a:focus-visible, button:focus-visible{
 
 .timeline-entry{
   position: relative;
-  display: grid;
-  grid-template-columns: 84px 1fr;
-  gap: 18px;
-  padding-bottom: 22px;
+  padding: 0 0 26px 26px;
 }
 .timeline-entry:last-child{ padding-bottom: 2px; }
 
@@ -306,20 +316,20 @@ a:focus-visible, button:focus-visible{
 .timeline-entry::before{
   content: "";
   position: absolute;
-  left: 92px;
-  top: 7px;
-  bottom: -15px;
+  left: 4px;
+  top: 16px;
+  bottom: -18px;
   width: 1px;
   background: var(--border-faint);
 }
 .timeline-entry:last-child::before{ display: none; }
 
-/* 年号の位置に打つドット */
+/* 年号バッジの位置に打つドット */
 .timeline-entry::after{
   content: "";
   position: absolute;
-  left: 88px;
-  top: 3px;
+  left: 0;
+  top: 6px;
   width: 9px;
   height: 9px;
   border-radius: 50%;
@@ -328,25 +338,32 @@ a:focus-visible, button:focus-visible{
   box-shadow: 0 0 6px rgba(201, 41, 63, 0.5);
 }
 
+/* 年号は「バッジ」として出来事の上に配置。文字数に応じて自然に伸び縮みするため
+   折り返しで崩れることがなく、視認性の高いアクセントにもなる。 */
 .timeline-year{
+  display: inline-block;
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.06em;
-  color: var(--accent-bright);
-  text-align: right;
-  padding-top: 1px;
+  color: var(--bg-void);
+  background: var(--accent-blood);
+  padding: 3px 10px;
+  border-radius: 2px;
+  margin-bottom: 9px;
+  box-shadow: 0 0 12px rgba(201, 41, 63, 0.45);
 }
 
 .timeline-event{
   font-size: 13px;
   color: var(--text-muted);
-  line-height: 1.8;
+  line-height: 1.85;
 }
 
 @media (max-width: 520px){
-  .timeline-entry{ grid-template-columns: 64px 1fr; gap: 12px; }
-  .timeline-entry::before{ left: 72px; }
-  .timeline-entry::after{ left: 68px; }
+  .timeline-entry{ padding-left: 22px; }
+  .timeline-entry::before{ left: 3px; }
+  .timeline-year{ font-size: 10px; padding: 2px 8px; }
 }
 .trivia-list{ display: flex; flex-direction: column; gap: 10px; }
 .trivia-list li{ position: relative; padding-left: 18px; font-size: 13px; color: var(--text-muted); line-height: 1.85; }
@@ -502,6 +519,14 @@ body.modal-open{ overflow: hidden; }
     padding-bottom: 6px;
   }
   .char-tab-btn{ flex: 0 0 auto; white-space: nowrap; }
+
+  .lore-tabs{
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+  .lore-tab-btn{ flex: 0 0 auto; white-space: nowrap; }
 
   .music-player{ width: 220px; }
 }
@@ -1413,9 +1438,198 @@ body.blood-pact-active #magicCircleBackground {
   opacity: 0.85;
 }
 
+.video-container {
+  width: 100%;
+  max-width: 800px; /* 必要に応じて最大幅を調整してください */
+  aspect-ratio: 16 / 9; /* 常に16:9の比率を維持します */
+  overflow: hidden;
+  border-radius: 8px; /* 角を丸くしたい場合（お好みで） */
+  position: relative; /* クリック時に前面へ持ち上げるため */
+  cursor: pointer;
+}
 
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 枠いっぱいに綺麗に収める（トリミングあり） */
+  display: block;
+  pointer-events: none; /* スマホやPCでクリック・タップした時の動作や長押しメニューを無効化します */
+}
 
+/* クリック時、動画だけを画面暗転・炎より前面に持ち上げて浮かび上がらせる */
+.video-container.is-spotlit{
+  z-index: 9600;
+}
 
+/* 動画以外の画面全体を覆う暗転オーバーレイ（動画自体は上記のz-index引き上げにより影響を受けない） */
+.screen-dim-overlay{
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0;
+}
+.screen-dim-overlay.is-active{
+  animation: screenDimAnim 7s ease-out forwards; /* 5〜9秒の範囲で調整可。JS側のタイマーと合わせること */
+}
+@keyframes screenDimAnim{
+  0%   { opacity: 0; }
+  8%   { opacity: 0.78; } /* すばやく暗くなる */
+  100% { opacity: 0; }    /* ゆっくりと元に戻る */
+}
+
+/* 暗転と同時に画面全体を舞う、大きめのキラキラしたパーティクル。
+   個々の粒(.sparkle-particle)はクリック時にJSで複数生成し、画面全体にランダムな
+   位置・大きさ・漂う方向・タイミングでふわふわと明滅させながら舞わせる。 */
+.sparkle-overlay{
+  position: fixed;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 9400; /* 暗転(9000)より前面、スポットライト中の動画(9600)より背面 */
+}
+.sparkle-particle{
+  position: fixed;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  filter: drop-shadow(0 0 7px rgba(201, 41, 63, 0.85));
+}
+.sparkle-particle::before,
+.sparkle-particle::after{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 2px;
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(227, 217, 217, 0.95) 45%,
+      rgba(168, 168, 168, 0.9) 58%,
+      transparent 100%);
+}
+.sparkle-particle::before{ width: 100%; height: 14%; transform: translate(-50%, -50%); }
+.sparkle-particle::after{ width: 14%; height: 100%; transform: translate(-50%, -50%); }
+
+.sparkle-particle.is-active{
+  animation-name: sparkleDrift;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  animation-duration: var(--sparkle-duration, 7s);
+  animation-delay: var(--sparkle-delay, 0s);
+}
+@keyframes sparkleDrift{
+  0%   { opacity: 0;    transform: translate(var(--sx), var(--sy)) scale(0.3) rotate(0deg); }
+  14%  { opacity: 1;    transform: translate(var(--sx), var(--sy)) scale(1) rotate(60deg); }
+  50%  { opacity: 0.85; transform: translate(calc(var(--sx) + var(--dx)), calc(var(--sy) + var(--dy))) scale(1.15) rotate(220deg); }
+  82%  { opacity: 0.55; transform: translate(calc(var(--sx) + var(--dx) * 1.3), calc(var(--sy) + var(--dy) * 1.3)) scale(0.9) rotate(320deg); }
+  100% { opacity: 0;    transform: translate(calc(var(--sx) + var(--dx) * 1.6), calc(var(--sy) + var(--dy) * 1.6)) scale(0.4) rotate(400deg); }
+}
+
+.gif-container {
+  width: 100%;
+  max-width: 200px; /* サイズはお好みで調整 */
+  margin: 0 auto;
+  position: relative; /* 発光エフェクトの配置基準 */
+  cursor: pointer;
+}
+
+.gif-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none; /* 動画と同じくドラッグや右クリック保存を防止 */
+  position: relative;
+  z-index: 1; /* 発光エフェクトより前面に表示 */
+}
+
+/* クリック時、GIFの背後にふわっと広がる赤い光 */
+.gif-glow{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 140%;
+  height: 140%;
+  transform: translate(-50%, -50%) scale(0.6);
+  background: radial-gradient(circle, rgba(201, 41, 63, 0.55) 0%, rgba(201, 41, 63, 0.25) 40%, transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(2px);
+}
+.gif-glow.is-active{
+  animation: gifGlowBloom 1.1s ease-out forwards;
+}
+@keyframes gifGlowBloom{
+  0%   { opacity: 0;   transform: translate(-50%, -50%) scale(0.5); }
+  25%  { opacity: 0.9; transform: translate(-50%, -50%) scale(0.9); }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scale(1.6); }
+}
+
+/* クリック時、GIF自体がぽよんと弾む */
+.gif-container img.is-bouncing{
+  animation: gifPoyon 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes gifPoyon{
+  0%   { transform: scale(1, 1); }
+  30%  { transform: scale(1.18, 0.85); }
+  50%  { transform: scale(0.92, 1.1); }
+  70%  { transform: scale(1.06, 0.97); }
+  100% { transform: scale(1, 1); }
+}
+
+.video-container {
+  width: 100%;
+  max-width: 800px; /* 必要に応じて調整 */
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+
+ /* ▼ 上下左右の4辺をそれぞれ20%分強めにぼかす設定 */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent),
+                      linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent),
+              linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+  mask-composite: intersect;
+}
+
+.video-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.final-message-container {
+  padding: 60px 20px 80px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.final-message {
+  color: #99030b; /* 深紅 */
+  font-family: serif; /* 世界観に合わせた明朝体推奨 */
+  font-size: 0.9em;
+  line-height: 1.8;
+  letter-spacing: 0.1em;
+  
+  /* 初期状態：透明 & 少し下に配置 */
+  opacity: 0;
+  transform: translateY(20px);
+  
+  /* 2.5秒かけてゆっくり変化 */
+  transition: opacity 3.5s ease, transform 3.5s ease, text-shadow 3.5s ease;
+}
+
+/* 一番下までスクロールして画面に入った時のスタイル */
+.final-message.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  /* ほのかに深紅の光を纏わせる（不気味さの演出） */
+  text-shadow: 0 0 8px rgba(201, 58, 64, 0.4);
+}
 
 
 
@@ -1446,6 +1660,8 @@ body.blood-pact-active #magicCircleBackground {
 <div class="pact-flash-overlay" id="pactFlashOverlay"></div>
 <div class="moon-blackout-overlay" id="moonBlackoutOverlay"></div>
 <div class="screen-glitch-overlay" id="screenGlitchOverlay"></div>
+<div class="screen-dim-overlay" id="screenDimOverlay"></div>
+<div class="sparkle-overlay" id="sparkleOverlay"></div>
 
 <div class="top-right-moon-wrapper">
   <div class="moon-container">
@@ -1485,7 +1701,7 @@ body.blood-pact-active #magicCircleBackground {
     <li><a href="#character" data-nav-link><span class="roman">II</span>CHARACTERS</a></li>
     <li><a href="#setting" data-nav-link><span class="roman">III</span>DATA BANK</a></li>
     <li><a href="#lore" data-nav-link><span class="roman">IV</span>GLOSSARY</a></li>
-    <li><a href="#gallery" data-nav-link><span class="roman">V</span>GALLERY</a></li>
+    <li><a href="#gallery" data-nav-link><span class="roman">V</span>BONUS</a></li>
   </ul>
 
   <div class="nav-divider"></div>
@@ -1512,7 +1728,7 @@ body.blood-pact-active #magicCircleBackground {
       <h2>はじめに</h2>
       <p class="section-lead">NOCTURNEへようこそ。<br>
       本サイトでは、魔界に刻まれた古の伝承や各地の歴史、この世界に棲む者たちの詳細な個体記録、および魔界の構造を示す用語や視覚記録を公開しています。<br>
-      <br>警告：この領域には、あらゆる魔術が施されています。<br>
+      警告：この領域には、あらゆる魔術が施されています。<br>
       あちこちに潜む仕掛けは、貴方の手に触れられるのを待っているでしょう。<br>
       ただし――何が起きても自己責任で。
      </p>
@@ -1576,7 +1792,7 @@ body.blood-pact-active #magicCircleBackground {
       </p>
       <p>
         かつて一万年以上続いた「冥王紀」は終焉を迎え、現在は人間界との間に結ばれた『契約』に基づく契約暦（Pact Era / P.E.）<span id="pact-era">1326</span>年。<br>
-        魔界は人間界の継続的な監視下に置かれ、契約の維持と更新によってかろうじてその均衡を保っている。
+        魔界は人間界の継続的な監視下に置かれ、契約の維持と更新によってかろうじてその均衡を保っている.
       </p>
 
       <p style="font-size: 1.2rem; font-weight: bold; color: var(--text-main); border-bottom: 1px solid var(--border-blood); padding-bottom: 6px; margin-top: 24px;">
@@ -1710,7 +1926,7 @@ body.blood-pact-active #magicCircleBackground {
                 <div class="name-en">CHARACTER 02</div>
                 <h3 class="name">Xeno = Tentatores</h3>
                 <div class="tag-row"><span class="tag">元一般下級悪魔</span><span class="tag">第9階級 悪の誘惑者</span></div>
-                <p class="desc">禁忌を逃れし第13局の観測者。禁忌の研究から逃げ延び、アモンの下で魔界の記録を紡ぎ続ける最下級悪魔。</p>
+                <p class="desc">禁忌を逃れし第13局の観測者。悲劇の研究から逃げ延び、アモンの下で魔界の記録を紡ぎ続ける最下級悪魔。</p>
               </div>
             </div>
             <div class="card-back">
@@ -1877,12 +2093,12 @@ body.blood-pact-active #magicCircleBackground {
     </div>
 
     <div class="char-tabs" role="tablist">
-      <button type="button" class="char-tab-btn is-active" id="char-tab-1" data-char-target="char-panel-1">キャラ1</button>
-      <button type="button" class="char-tab-btn" id="char-tab-2" data-char-target="char-panel-2">キャラ2</button>
-      <button type="button" class="char-tab-btn" id="char-tab-3" data-char-target="char-panel-3">キャラ3</button>
-      <button type="button" class="char-tab-btn" id="char-tab-4" data-char-target="char-panel-4">キャラ4</button>
-      <button type="button" class="char-tab-btn" id="char-tab-5" data-char-target="char-panel-5">キャラ5</button>
-      <button type="button" class="char-tab-btn" id="char-tab-6" data-char-target="char-panel-6">キャラ6</button>
+      <button type="button" class="char-tab-btn is-active" id="char-tab-1" data-char-target="char-panel-1">Amon</button>
+      <button type="button" class="char-tab-btn" id="char-tab-2" data-char-target="char-panel-2">Xeno</button>
+      <button type="button" class="char-tab-btn" id="char-tab-3" data-char-target="char-panel-3">Vimic</button>
+      <button type="button" class="char-tab-btn" id="char-tab-4" data-char-target="char-panel-4">Luchien</button>
+      <button type="button" class="char-tab-btn" id="char-tab-5" data-char-target="char-panel-5">Mira</button>
+      <button type="button" class="char-tab-btn" id="char-tab-6" data-char-target="char-panel-6">Friend</button>
     </div>
 
     <div class="char-panels">
@@ -2108,6 +2324,13 @@ body.blood-pact-active #magicCircleBackground {
       <p class="section-lead">地理・組織・用語など共通の言葉について。</p>
     </div>
 
+    <div class="lore-tabs" role="tablist">
+      <button type="button" class="lore-tab-btn is-active" id="lore-tab-1" data-lore-target="lore-panel-1">地理</button>
+      <button type="button" class="lore-tab-btn" id="lore-tab-2" data-lore-target="lore-panel-2">組織・施設</button>
+      <button type="button" class="lore-tab-btn" id="lore-tab-3" data-lore-target="lore-panel-3">世界観・現象</button>
+    </div>
+
+    <div class="lore-tab-panel is-active" id="lore-panel-1">
     <div class="lore-category">
       <div class="lore-category-head"><h3>地理</h3><span class="count">9 件</span></div>
       
@@ -2169,7 +2392,9 @@ body.blood-pact-active #magicCircleBackground {
       </article>
 
     </div>
+    </div>
 
+    <div class="lore-tab-panel" id="lore-panel-2">
     <div class="lore-category">
       <div class="lore-category-head"><h3>組織・施設</h3><span class="count">3 件</span></div>
       
@@ -2192,7 +2417,9 @@ body.blood-pact-active #magicCircleBackground {
       </article>
 
     </div>
+    </div>
 
+    <div class="lore-tab-panel" id="lore-panel-3">
     <div class="lore-category">
       <div class="lore-category-head"><h3>世界観・現象</h3><span class="count">5 件</span></div>
       
@@ -2228,10 +2455,11 @@ body.blood-pact-active #magicCircleBackground {
       </article>
     
     </div>
+    </div>
 
     <div class="page-nav">
       <a href="#setting" class="prev">← 前のチャプター<span class="label">DATA BANK</span></a>
-      <a href="#gallery" class="next">次のチャプター →<span class="label">GALLERY</span></a>
+      <a href="#gallery" class="next">次のチャプター →<span class="label">BONUS</span></a>
     </div>
 
     <div class="barrier-section">
@@ -2248,51 +2476,76 @@ body.blood-pact-active #magicCircleBackground {
 
   </section>
 
-  <!-- CHAPTER V. GALLERY -->
+    <!-- CHAPTER V. GALLERY -->
   <section id="gallery" class="page">
     <div class="section-head">
       <div class="eyebrow">CHAPTER V</div>
-      <h2>GALLERY</h2>
-      <p class="section-lead">キャラクターたちの絵をまとめた画廊。</p>
+      <h2>BONUS</h2>
+      <p class="section-lead"> </p>
     </div>
-    <div class="gallery-grid">
-      <article class="gallery-item">
-        <div class="img-frame"><span class="placeholder-text">NO IMAGE</span></div>
-        <div class="gallery-caption">
-          <div class="g-title">イラストのタイトル</div>
-          <div class="g-meta"><span class="g-char">キャラクター名</span><span>2026.08</span></div>
-        </div>
-      </article>
+
+    <div class="video-container">
+      <video src="images/loopanime.mp4" autoplay muted loop playsinline></video>
     </div>
+
+    <!-- ここに20pxの隙間 -->
+    <div style="height: 70px;"></div>
+
+
+
+    <!-- 最下部のメッセージエリア -->
+    <div class="final-message-container">
+     <p class="final-message">
+      幾千の夜を越えて、再び巡り逢えますように。<br>
+      ――良い悪夢を。
+      </p>
+    </div> 
+
+  
+    
     <div class="page-nav">
       <a href="#lore" class="prev">← 前のチャプター<span class="label">GLOSSARY</span></a>
-      <a href="#profile" class="next">PROFILEへ →<span class="label">著者について</span></a>
+      <a href="#profile" class="next">PROFILEへ →<span class="label">管理者について</span></a>
     </div>
   </section>
 
   <!-- PROFILE -->
   <section id="profile" class="page">
     <div class="section-head">
-      <div class="eyebrow">AUTHOR</div>
+      <div class="eyebrow">ADMINISTRATOR</div>
       <h2 style="font-size:20px;">PROFILE</h2>
     </div>
     <div class="author-note">
-      <div class="author-avatar"><span class="placeholder-text">NO<br>IMG</span></div>
+      <div class="author-avatar">
+        <img src="images/char02.png" alt="Author Avatar" draggable="false">
+      </div>
       <div>
-        <div class="author-name-en">YOUR NAME HERE</div>
-        <h3 class="author-name">名前・ハンドルネーム</h3>
-        <p class="author-catch">夜に咲く言葉を、ここに綴る。</p>
+        <div class="author-name-en">記録管理者</div>
+        <h3 class="author-name">Xeno = Tentatores</h3>
+        <p class="author-catch">魔界の記録をしながら人間界も偵察中。</p>
+        
         <div class="author-info">
-          <span>誕生日：<b>〇月〇日</b></span>
-          <span>好物：<b>古い本、深紅のワイン</b></span>
+          <span>誕生日：<b>6月30日</b></span>
+          <span>好きな食べ物：<b>甘い物</b></span>
+          <span>好きな動物：<b>狼、コウモリ</b></span>
+          <span>好きな場所：<b>夜の人間界</b></span>
+          <br>
         </div>
       </div>
     </div>
+    <div style="height: 30px;"></div>
+    <div class="gif-container">
+     <div class="gif-glow" id="gifGlow"></div>
+     <img src="images/loopgif.gif" draggable="false">
+    </div>
+
     <div class="page-nav">
-      <a href="#gallery" class="prev">← 前のチャプター<span class="label">GALLERY</span></a>
+      <a href="#gallery" class="prev">← 前のチャプター<span class="label">BONUS</span></a>
       <a href="#prologue" class="next">最初へ →<span class="label">はじめに</span></a>
     </div>
   </section>
+
+  
 
   <footer>
     © P.E. 0000-<span id="pact-era">1326</span><br>Originally System-Designed by Marquis Amon.<br>Maintained & Archived by Xeno.<br>
@@ -2373,6 +2626,115 @@ function openCharTab(panelId, tabId) {
       var targetId = btn.getAttribute('data-char-target');
       tabButtons.forEach(function(b){ b.classList.toggle('is-active', b === btn); });
       panels.forEach(function(p){ p.classList.toggle('is-active', p.id === targetId); });
+    });
+  });
+})();
+
+// --- BONUS動画クリック：暗転スポットライト＋画面全体を舞うキラキラパーティクル ---
+(function(){
+  var videoContainer = document.querySelector('.video-container');
+  var dimOverlay = document.getElementById('screenDimOverlay');
+  var sparkleOverlay = document.getElementById('sparkleOverlay');
+  var dimTimer = null;
+
+  var EFFECT_DURATION_MS = 7000; // 暗転・パーティクルともにこの長さで揃える（5000〜9000の範囲で調整可）
+  var SPARKLE_COUNT = 50;
+
+  function spawnSparkleEffect(){
+    if (!sparkleOverlay) return;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+
+    for (var i = 0; i < SPARKLE_COUNT; i++){
+      var sparkle = document.createElement('div');
+      sparkle.className = 'sparkle-particle';
+
+      var sizePx = 5 + Math.random() * 14; // 大きめのキラキラ（22〜48px）
+      var startX = Math.random() * vw;
+      var startY = Math.random() * vh;
+      // ふわふわと漂う方向・距離をランダムに決める
+      var driftAngle = Math.random() * Math.PI * 2;
+      var driftDist = 60 + Math.random() * 120;
+      var dx = Math.cos(driftAngle) * driftDist;
+      var dy = Math.sin(driftAngle) * driftDist - 40; // 少し上へ漂う傾向を持たせる
+      var durationSec = (EFFECT_DURATION_MS / 1000) * (0.7 + Math.random() * 0.5);
+      var delaySec = Math.random() * (EFFECT_DURATION_MS / 1000) * 0.5;
+
+      sparkle.style.width = sizePx + 'px';
+      sparkle.style.height = sizePx + 'px';
+      sparkle.style.setProperty('--sx', startX + 'px');
+      sparkle.style.setProperty('--sy', startY + 'px');
+      sparkle.style.setProperty('--dx', dx + 'px');
+      sparkle.style.setProperty('--dy', dy + 'px');
+      sparkle.style.setProperty('--sparkle-duration', durationSec + 's');
+      sparkle.style.setProperty('--sparkle-delay', delaySec + 's');
+
+      sparkleOverlay.appendChild(sparkle);
+
+      window.requestAnimationFrame(function(el){
+        return function(){ el.classList.add('is-active'); };
+      }(sparkle));
+
+      window.setTimeout(function(el){
+        return function(){ if (el.parentNode) el.remove(); };
+      }(sparkle), (durationSec + delaySec) * 1000 + 300);
+    }
+  }
+
+  if (videoContainer && dimOverlay) {
+    videoContainer.addEventListener('click', function(){
+      videoContainer.classList.add('is-spotlit');
+
+      dimOverlay.classList.remove('is-active');
+      void dimOverlay.offsetWidth; // リフロー強制（連打時に再始動させる）
+      dimOverlay.classList.add('is-active');
+
+      spawnSparkleEffect();
+
+      if (dimTimer) window.clearTimeout(dimTimer);
+      dimTimer = window.setTimeout(function(){
+        videoContainer.classList.remove('is-spotlit');
+        dimOverlay.classList.remove('is-active');
+      }, EFFECT_DURATION_MS + 300);
+    });
+  }
+})();
+
+// --- PROFILE GIFクリック：ぽよんと跳ねて赤い光がふわっと広がる演出 ---
+(function(){
+  var gifContainer = document.querySelector('.gif-container');
+  var gifImg = gifContainer ? gifContainer.querySelector('img') : null;
+  var gifGlow = document.getElementById('gifGlow');
+  var gifTimer = null;
+
+  if (gifContainer && gifImg && gifGlow) {
+    gifContainer.addEventListener('click', function(){
+      gifImg.classList.remove('is-bouncing');
+      void gifImg.offsetWidth;
+      gifImg.classList.add('is-bouncing');
+
+      gifGlow.classList.remove('is-active');
+      void gifGlow.offsetWidth;
+      gifGlow.classList.add('is-active');
+
+      if (gifTimer) window.clearTimeout(gifTimer);
+      gifTimer = window.setTimeout(function(){
+        gifImg.classList.remove('is-bouncing');
+        gifGlow.classList.remove('is-active');
+      }, 1200);
+    });
+  }
+})();
+
+// --- GLOSSARYタブ切り替え（DATA BANKタブとは完全に独立） ---
+(function(){
+  var loreTabButtons = Array.prototype.slice.call(document.querySelectorAll('.lore-tab-btn'));
+  var lorePanels = Array.prototype.slice.call(document.querySelectorAll('.lore-tab-panel'));
+  loreTabButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var targetId = btn.getAttribute('data-lore-target');
+      loreTabButtons.forEach(function(b){ b.classList.toggle('is-active', b === btn); });
+      lorePanels.forEach(function(p){ p.classList.toggle('is-active', p.id === targetId); });
     });
   });
 })();
@@ -3040,6 +3402,29 @@ document.addEventListener('DOMContentLoaded', function() {
       targetElement.textContent = pactEraYear;
     }
   })();
+
+ // ============================================================
+ // ★ここから追加：最下部スクロール時のメッセージ発光演出
+ // ============================================================
+  document.addEventListener('DOMContentLoaded', function() {
+   var finalMessage = document.querySelector('.final-message');
+
+   if (finalMessage) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          finalMessage.classList.add('is-visible');
+          observer.unobserve(entry.target); // 一度表示したら監視を解除
+        }
+      });
+    }, {
+      threshold: 0.5 // メッセージが50%画面に入ったら発火
+    });
+
+    observer.observe(finalMessage);
+  }
+});
+
 </script>
 
 </body>
