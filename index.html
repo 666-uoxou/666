@@ -1605,7 +1605,9 @@ body.blood-pact-active #magicCircleBackground {
 .final-message-container {
   padding: 60px 20px 80px;
   text-align: center;
-  overflow: hidden;
+  /* overflow: hidden; は削除します */
+  display: block;
+  min-height: 100px; /* 領域を確保して判定を確実にします */
 }
 
 .final-message {
@@ -2503,8 +2505,6 @@ body.blood-pact-active #magicCircleBackground {
     <!-- ここに20pxの隙間 -->
     <div style="height: 70px;"></div>
 
-
-
     <!-- 最下部のメッセージエリア -->
     <div class="final-message-container">
      <p class="final-message">
@@ -2512,8 +2512,6 @@ body.blood-pact-active #magicCircleBackground {
       ――良い悪夢を。
       </p>
     </div> 
-
-  
     
     <div class="page-nav">
       <a href="#lore" class="prev">← 前のチャプター<span class="label">GLOSSARY</span></a>
