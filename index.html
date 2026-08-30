@@ -3439,13 +3439,13 @@ document.addEventListener('DOMContentLoaded', function() {
       el.textContent = age;
     });
 
- // ============================================================
- // ★ここから追加：最下部スクロール時のメッセージ発光演出
- // ============================================================
-  document.addEventListener('DOMContentLoaded', function() {
-   var finalMessage = document.querySelector('.final-message');
+// ============================================================
+// ★最下部スクロール時のメッセージ発光演出
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+  var finalMessage = document.querySelector('.final-message');
 
-   if (finalMessage) {
+  if (finalMessage) {
     var observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting) {
@@ -3454,13 +3454,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
     }, {
-      threshold: 0.5 // メッセージが50%画面に入ったら発火
+      threshold: 0.1 // ★ 0.5 から 0.1 に変更（少しでも見えたら確実に発火させる）
     });
 
     observer.observe(finalMessage);
   }
 });
-
 </script>
 
 </body>
