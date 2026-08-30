@@ -1633,12 +1633,6 @@ body.blood-pact-active #magicCircleBackground {
   text-shadow: 0 0 8px rgba(201, 58, 64, 0.4);
 }
 
-/* 一時的なテスト用CSS */
-.final-message {
-  opacity: 1 !important;
-  transform: none !important;
-  color: red !important; /* 赤文字で強制表示 */
-}
 
 </style>
 </head>
@@ -3445,7 +3439,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 // ============================================================
-// ★最下部スクロール時のメッセージ発光演出（強化版）
+// ★最下部スクロール時のメッセージ発光演出
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
   var finalMessage = document.querySelector('.final-message');
@@ -3455,18 +3449,20 @@ document.addEventListener('DOMContentLoaded', function() {
       var rect = finalMessage.getBoundingClientRect();
       var windowHeight = window.innerHeight || document.documentElement.clientHeight;
 
-      // メッセージの上端が画面内に入ったら発火（下から100pxの位置）
-      if (rect.top <= windowHeight - 50) {
+      // メッセージが画面下端から入ってきたら即座に is-visible クラスを付与
+      if (rect.top <= windowHeight) {
         finalMessage.classList.add('is-visible');
-        window.removeEventListener('scroll', checkScroll); // 一度表示したらイベント解除
+        window.removeEventListener('scroll', checkScroll); // 1度表示したら監視終了
       }
     }
 
-    // スクロール時と画面読込時にチェック
+    // スクロール時と、ページ読み込み完了時（すでに下部にいる場合）の両方で実行
     window.addEventListener('scroll', checkScroll);
     checkScroll();
   }
 });
+
+   
 </script>
 
 </body>
